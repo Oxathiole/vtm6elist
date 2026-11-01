@@ -114,7 +114,7 @@ export const MasterPage4 = () => {
     verticalAlign: 'top',
   };
 
-  const renderExampleTable = (prefix: string, count: number) => (
+  const renderExampleTable = (prefix: string, count: number, start = 1) => (
     <table style={tableStyle}>
       <thead>
         <tr>
@@ -125,8 +125,8 @@ export const MasterPage4 = () => {
       <tbody>
         {Array.from({ length: count }, (_, i) => (
           <tr key={i}>
-            <td style={{ ...tableCellStyle, textAlign: 'center', fontWeight: 'bold', color: 'var(--accent)' }}>{i + 1}</td>
-            <td style={tableCellStyle}>{t(`${prefix}_${i + 1}`)}</td>
+            <td style={{ ...tableCellStyle, textAlign: 'center', fontWeight: 'bold', color: 'var(--accent)' }}>{i + start}</td>
+            <td style={tableCellStyle}>{t(`${prefix}_${i + start}`)}</td>
           </tr>
         ))}
       </tbody>
@@ -198,7 +198,7 @@ export const MasterPage4 = () => {
           <div style={sectionTitleStyle}>◆ {t('master.ref.conflicts')}</div>
           <div style={{ display: 'flex', gap: '20px' }}>
             <div style={{ flex: 1 }}>{renderExampleTable('master.ref.conflict', 5)}</div>
-            <div style={{ flex: 1 }}>{renderExampleTable('master.ref.conflict', 5)}</div>
+            <div style={{ flex: 1 }}>{renderExampleTable('master.ref.conflict', 5, 6)}</div>
           </div>
         </div>
       </A4Page>

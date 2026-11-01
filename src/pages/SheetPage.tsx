@@ -4,8 +4,9 @@ import { SheetPage1 } from '../components/SheetPage1';
 import { SheetPage2 } from '../components/SheetPage2';
 import { SheetPage3 } from '../components/SheetPage3';
 import { SheetPageInventory } from '../components/SheetPageInventory';
-import { SheetPage4 } from '../components/SheetPage4';
 import { useSheetHotkeys } from '../hooks/useSheetHotkeys';
+import React, { Suspense, lazy } from 'react';
+const SheetPage4 = lazy(() => import('../components/SheetPage4').then(m => ({ default: m.SheetPage4 })));
 
 interface SheetPageProps {
   showTips: boolean;
@@ -25,9 +26,11 @@ export const SheetPage = ({ showTips, handleExportPdf }: SheetPageProps) => {
       <SheetPage3 />
       <SheetPageInventory />
 
-      {character.powerPages?.map((page, idx) => (
-        <SheetPage4 key={page.id} page={page} pageIndex={idx} />
-      ))}
+      <Suspense fallback={null}>
+        {character.powerPages?.map((page, idx) => (
+          <SheetPage4 key={page.id} page={page} pageIndex={idx} />
+        ))}
+      </Suspense>
 
       <div className="no-print" style={{ marginTop: '20px', marginBottom: '40px', textAlign: 'center' }}>
         <button

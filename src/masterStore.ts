@@ -1,7 +1,10 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { debouncedStorage } from './utils/debouncedStorage';
+import i18n from './i18n';
 import type { MasterSheet, Campaign, SceneTrait, MasterSessionNote } from './types';
+
+const getLocale = () => (i18n as any).lng || 'ru';
 
 const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v));
 
@@ -72,11 +75,12 @@ export const useMasterStore = create<MasterStore>()(
 
       removeCampaign: (id) => set((s) => {
         const remaining = (s.master.campaigns || []).filter(c => c.id !== id);
+        const newCampaigns = remaining.length > 0 ? remaining : [createEmptyCampaign()];
         const newActiveId = s.master.activeCampaignId === id
-          ? (remaining.length > 0 ? remaining[0].id : null)
+          ? newCampaigns[0].id
           : s.master.activeCampaignId;
         return {
-          master: { ...s.master, campaigns: remaining, activeCampaignId: newActiveId },
+          master: { ...s.master, campaigns: newCampaigns, activeCampaignId: newActiveId },
         };
       }),
 
@@ -161,7 +165,7 @@ export const useMasterStore = create<MasterStore>()(
       addSessionNote: () => set((s) => {
         const now = new Date();
         const date = now.toISOString().split('T')[0];
-        const lastUpdated = now.toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        const lastUpdated = now.toLocaleString(getLocale(), { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
         const newNote: MasterSessionNote = { id: uid(), date, lastUpdated, content: '' };
         const campId = s.master.activeCampaignId || s.master.campaigns[0]?.id;
         if (!campId) return s;

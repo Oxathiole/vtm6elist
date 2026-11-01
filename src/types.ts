@@ -199,7 +199,7 @@ export const NOSTALGIA_DECADES = [
 // АВТОЗАПОЛНЕНИЕ — справочники (ключи на английских ID)
 // ============================================================
 
-export const CLAN_DATA: Record<string, { bane: string; beast: string; rage: string; disciplines: string[] }> = {
+export const CLAN_DATA: Record<string, { bane: string; beast: string; rage: string; disciplines: string[]; isPlaceholder?: boolean }> = {
   'brujah': { bane: 'clans.brujah_bane', beast: 'clans.brujah_beast', rage: 'clans.brujah_rage', disciplines: ['celerity', 'potence', 'presence'] },
   'gangrel': { bane: 'clans.gangrel_bane', beast: 'clans.gangrel_beast', rage: 'clans.gangrel_rage', disciplines: ['animalism', 'celerity', 'fortitude'] },
   'lasombra': { bane: 'clans.lasombra_bane', beast: 'clans.lasombra_beast', rage: 'clans.lasombra_rage', disciplines: ['dominate', 'potence', 'oblivion'] },
@@ -207,13 +207,13 @@ export const CLAN_DATA: Record<string, { bane: string; beast: string; rage: stri
   'nosferatu': { bane: 'clans.nosferatu_bane', beast: 'clans.nosferatu_beast', rage: 'clans.nosferatu_rage', disciplines: ['animalism', 'obfuscate', 'potence'] },
   'toreador': { bane: 'clans.toreador_bane', beast: 'clans.toreador_beast', rage: 'clans.toreador_rage', disciplines: ['auspex', 'celerity', 'presence'] },
   'ventrue': { bane: 'clans.ventrue_bane', beast: 'clans.ventrue_beast', rage: 'clans.ventrue_rage', disciplines: ['dominate', 'fortitude', 'presence'] },
-  'banu_haqim': { bane: 'clans.banu_haqim_bane', beast: 'clans.banu_haqim_beast', rage: 'clans.banu_haqim_rage', disciplines: ['blood_sorcery', 'celerity', 'obfuscate'] },
-  'giovanni': { bane: 'clans.giovanni_bane', beast: 'clans.giovanni_beast', rage: 'clans.giovanni_rage', disciplines: ['auspex', 'potence', 'necromancy'] },
-  'malkavian': { bane: 'clans.malkavian_bane', beast: 'clans.malkavian_beast', rage: 'clans.malkavian_rage', disciplines: ['auspex', 'dominate', 'obfuscate'] },
-  'ravnos': { bane: 'clans.ravnos_bane', beast: 'clans.ravnos_beast', rage: 'clans.ravnos_rage', disciplines: ['obfuscate', 'presence', 'tellurgy'] },
-  'salubri': { bane: 'clans.salubri_bane', beast: 'clans.salubri_beast', rage: 'clans.salubri_rage', disciplines: ['auspex', 'fortitude', 'obfuscate'] },
-  'tremere': { bane: 'clans.tremere_bane', beast: 'clans.tremere_beast', rage: 'clans.tremere_rage', disciplines: ['auspex', 'dominate', 'blood_sorcery'] },
-  'tzimisce': { bane: 'clans.tzimisce_bane', beast: 'clans.tzimisce_beast', rage: 'clans.tzimisce_rage', disciplines: ['animalism', 'dominate', 'vicissitude'] },
+  'banu_haqim': { bane: 'clans.banu_haqim_bane', beast: 'clans.banu_haqim_beast', rage: 'clans.banu_haqim_rage', isPlaceholder: true, disciplines: ['blood_sorcery', 'celerity', 'obfuscate'] },
+  'giovanni': { bane: 'clans.giovanni_bane', beast: 'clans.giovanni_beast', rage: 'clans.giovanni_rage', isPlaceholder: true, disciplines: ['auspex', 'potence', 'necromancy'] },
+  'malkavian': { bane: 'clans.malkavian_bane', beast: 'clans.malkavian_beast', rage: 'clans.malkavian_rage', isPlaceholder: true, disciplines: ['auspex', 'dominate', 'obfuscate'] },
+  'ravnos': { bane: 'clans.ravnos_bane', beast: 'clans.ravnos_beast', rage: 'clans.ravnos_rage', isPlaceholder: true, disciplines: ['obfuscate', 'presence', 'tellurgy'] },
+  'salubri': { bane: 'clans.salubri_bane', beast: 'clans.salubri_beast', rage: 'clans.salubri_rage', isPlaceholder: true, disciplines: ['auspex', 'fortitude', 'obfuscate'] },
+  'tremere': { bane: 'clans.tremere_bane', beast: 'clans.tremere_beast', rage: 'clans.tremere_rage', isPlaceholder: true, disciplines: ['auspex', 'dominate', 'blood_sorcery'] },
+  'tzimisce': { bane: 'clans.tzimisce_bane', beast: 'clans.tzimisce_beast', rage: 'clans.tzimisce_rage', isPlaceholder: true, disciplines: ['animalism', 'dominate', 'vicissitude'] },
   'caitiff': { bane: '', beast: '', rage: '', disciplines: [] },
 };
 
@@ -304,7 +304,7 @@ const RU_TO_ID: Record<string, string> = {
   // Кланы
   'Бруха': 'brujah', 'Гангрел': 'gangrel', 'Ласомбра': 'lasombra', 'Министри': 'ministry',
   'Носферату': 'nosferatu', 'Тореадор': 'toreador', 'Вентру': 'ventrue', 'Бану Хаким': 'banu_haqim',
-  'Джованни': 'giovanni', 'Малкавиан': 'malkavian', 'Равнос': 'ravnos', 'Салобри': 'salubri',
+  'Джованни': 'giovanni', 'Малкавиан': 'malkavian', 'Равнос': 'ravnos', 'Салюбри': 'salubri',
   'Тремер': 'tremere', 'Цимисхи': 'tzimisce', 'Каитиф': 'caitiff',
 
   // Навыки

@@ -145,6 +145,15 @@ export const SheetPage2 = () => {
         })}
       </div>
 
+      {/* Дропдаун-справочники для дисциплин: по одному на слот, чтобы list={disc-list-${i}} имело цель */}
+      {Array.from({ length: slots }).map((_, i) => (
+        <datalist key={`disc-dl-${i}`} id={`disc-list-${i}`}>
+          {DISCIPLINES_LIST.map(d => (
+            <option key={d.id} value={t('disciplines.' + d.id)} />
+          ))}
+        </datalist>
+      ))}
+
       {character.disciplines.length >= MAX_DISCIPLINES ? (
         <div style={{ width: '100%', padding: '2px 0', fontSize: '10px', textAlign: 'center', background: 'var(--panel)', border: '1px solid var(--border)', color: 'var(--muted)' }}>
           {t('common.limit_reached')}

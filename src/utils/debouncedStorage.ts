@@ -9,17 +9,16 @@ interface DebouncedStorage {
 const DEBOUNCE_MS = 400;
 
 export const debouncedStorage: DebouncedStorage = (() => {
-  let timer: ReturnType<typeof setTimeout> | null = null;
-  let pendingKey: string | null = null;
-  let pendingValue: string | null = null;
+  const pending = new Map<string, string>();
+  const timers = new Map<string, ReturnType<typeof setTimeout>>();
 
-  const flush = () => {
-    if (pendingKey !== null && pendingValue !== null) {
-      safeStorage.set(pendingKey, pendingValue);
+  const flush = (key: string) => {
+    const value = pending.get(key);
+    if (value !== undefined) {
+      safeStorage.set(key, value);
     }
-    pendingKey = null;
-    pendingValue = null;
-    timer = null;
+    pending.delete(key);
+    timers.delete(key);
   };
 
   return {
@@ -27,19 +26,19 @@ export const debouncedStorage: DebouncedStorage = (() => {
       return Promise.resolve(safeStorage.get(key));
     },
     setItem(key: string, value: string): Promise<void> {
-      pendingKey = key;
-      pendingValue = value;
-      if (timer) clearTimeout(timer);
-      timer = setTimeout(flush, DEBOUNCE_MS);
+      pending.set(key, value);
+      if (timers.has(key)) {
+        clearTimeout(timers.get(key)!);
+      }
+      timers.set(key, setTimeout(() => flush(key), DEBOUNCE_MS));
       return Promise.resolve();
     },
     removeItem(key: string): Promise<void> {
-      if (timer) {
-        clearTimeout(timer);
-        timer = null;
+      if (timers.has(key)) {
+        clearTimeout(timers.get(key)!);
+        timers.delete(key);
       }
-      pendingKey = null;
-      pendingValue = null;
+      pending.delete(key);
       safeStorage.remove(key);
       return Promise.resolve();
     },

@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { CharacterSheet, SKILLS_LIST, CLAN_DATA, VAMPIRE_TYPES, NOSTALGIA_DECADES, GENERATION_TO_MODIFIER, VAMPIRE_TYPE_TO_GENERATION, SIRE_TYPE_TO_DISCIPLINE, SIRE_TYPE_TO_DISCIPLINES, NATURE_TO_FLASH, MORTAL_LIFE_PATHS, VAMPIRE_LIFE_PATHS, normalizeId, DisciplineCard, PowerPage, HistoryItem } from './types';
 import { t } from './i18n';
-import { DISCIPLINE_POWERS } from './data/disciplinePowers';
 import { debouncedStorage } from './utils/debouncedStorage';
 import { useUIStore } from './uiStore';
 import { getAttributeCap, getSkillCap } from './utils/limits';
@@ -125,30 +124,7 @@ const wasI18nKey = (v?: string) => !!v && /^(clans|natures|powers|powers_meta)\.
 
 const migrateCard = (card: any): any => {
   if (!card) return null;
-  const id = card.id || generateId();
-
-  const disc = DISCIPLINE_POWERS[card.disciplineId];
-  const power = disc?.powers.find((p: any) => p.id === card.powerId);
-
-  if (power) {
-    return {
-      ...card,
-      id,
-      name: power.name,
-      rank: power.rank,
-      type: power.type,
-      activation: power.activation,
-      trait: power.trait,
-      cost: power.cost,
-      difficulty: power.difficulty,
-      range: power.range,
-      duration: power.duration,
-      // Если описание было кастомным (не начинается с ключа), оставляем его, иначе берем из справочника
-      description: (card.description && !card.description.startsWith('powers.')) ? card.description : power.description,
-      upgrade: (card.upgrade && !card.upgrade.startsWith('powers.')) ? card.upgrade : power.upgrade,
-    };
-  }
-  return { ...card, id };
+  return { ...card, id: card.id || generateId() };
 };
 
 
@@ -386,7 +362,7 @@ export const useCharacterStore = create<CharacterStore>()(
           
           if (data) {
             const oldData = CLAN_DATA[normalizeId(c.meta.clan || '')];
-            newMeta.clanBane = t(data.bane);
+            newMeta.clanBane = data.isPlaceholder ? '' : t(data.bane);
             newChar = { ...newChar, meta: newMeta };
 
             const oldBeastText = oldData?.beast ? t(oldData.beast) : '';
@@ -398,8 +374,8 @@ export const useCharacterStore = create<CharacterStore>()(
 
             newChar.beast = {
               ...c.beast,
-              clanBeast: isBeastAuto ? (data.beast ? t(data.beast) : '') : currentBeast,
-              rage: isRageAuto ? (data.rage ? t(data.rage) : '') : currentRage,
+              clanBeast: isBeastAuto ? (data.isPlaceholder ? '' : (data.beast ? t(data.beast) : '')) : currentBeast,
+              rage: isRageAuto ? (data.isPlaceholder ? '' : (data.rage ? t(data.rage) : '')) : currentRage,
             };
           }
           // Передаём старый клан (c.meta.clan) и новый клан (normalizedClan)

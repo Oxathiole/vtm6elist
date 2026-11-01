@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { useMasterStore } from '../masterStore';
 import type { Campaign, MasterSessionNote } from '../types';
+import i18n from '../i18n';
 import { useTranslation } from 'react-i18next';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { Trash2, Plus, X, Pencil } from 'lucide-react';
@@ -158,7 +159,9 @@ export const MasterPage1 = () => {
   };
 
   const handleRemoveCampaign = (id: string) => {
-    removeCampaign(id);
+    if (window.confirm(t('master.delete_confirm'))) {
+      removeCampaign(id);
+    }
   };
 
   // --- Session note handlers ---
@@ -364,7 +367,7 @@ export const MasterPage1 = () => {
       {sessionNotes.length > 0 && effectiveActiveTab ? (
         <textarea
           value={sessionNotes.find(n => n.id === effectiveActiveTab)?.content || ''}
-          onChange={(e) => updateSessionNote(effectiveActiveTab, { content: e.target.value, lastUpdated: new Date().toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) })}
+          onChange={(e) => { const now = new Date(); updateSessionNote(effectiveActiveTab, { content: e.target.value, lastUpdated: now.toLocaleString((i18n as any).language || 'ru', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) }); }}
           placeholder={t('master.session_notes_placeholder')}
           style={{
             flex: 1,

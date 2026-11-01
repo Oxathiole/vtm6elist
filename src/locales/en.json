@@ -17,6 +17,7 @@
     "session_notes": "Session Notes",
     "session_notes_placeholder": "Record events of the current session…",
     "delete": "Delete",
+    "delete_confirm": "Delete campaign?",
     "campaign": "Campaign",
     "edit_tab": "Rename tab",
     "npcs": "NPCs",
@@ -269,18 +270,18 @@
   "disciplines": {
     "animalism": "Animalism",
     "auspex": "Auspex",
-    "blood_sorcery": "Blood Sorcery",
+    "blood_sorcery": "[homebrew] Blood Sorcery",
     "celerity": "Celerity",
     "corruption": "Corruption",
     "dominate": "Dominate",
     "fortitude": "Fortitude",
-    "necromancy": "Necromancy",
+    "necromancy": "[homebrew] Necromancy",
     "obfuscate": "Obfuscate",
     "oblivion": "Oblivion",
     "potence": "Potence",
     "presence": "Presence",
-    "tellurgy": "Tellurgy",
-    "vicissitude": "Vicissitude"
+    "tellurgy": "[homebrew] Tellurgy",
+    "vicissitude": "[homebrew] Vicissitude"
   },
   "natures": {
     "autocrat": "Autocrat",
@@ -897,6 +898,174 @@
         "name": "Transcendent Aura",
         "description": "Others consider you untouchable. If someone tries to approach without permission — a roll against Resolve. On success, they cannot approach to near range. You can exclude targets = your Presence dots.",
         "upgrade": "None."
+      }
+    },
+    "blood_sorcery": {
+      "taste_of_blood": {
+        "name": "[homebrew] Taste of Blood",
+        "description": "By tasting a target's blood, you read its properties. Roll a Power check vs. the target's Resolve. On success you learn their blood type (mortal, ghoul, vampire, animal), clan (if vampire), Generation, health state, and any diseases or drugs in their system.",
+        "upgrade": "••: you also learn the target's last strong emotions. ••••: you learn the sire's name and clan. ••••••: you can read dried blood up to one year old."
+      },
+      "blood_shield": {
+        "name": "[homebrew] Blood Shield",
+        "description": "As a minor action, you turn your own blood into a dense barrier. Roll a Power check. On success you gain a bonus to defend against one physical attack equal to half your Blood Sorcery.",
+        "upgrade": "••: lasts until the end of the scene. ••••: the bonus equals your full Discipline rating. ••••••: the shield also protects against fire and sunlight."
+      },
+      "vitae_siphon": {
+        "name": "[homebrew] Vitae Siphon",
+        "description": "You draw blood from a visible target at near range. Roll a Power check vs. the target's Stamina. On success the target takes Vitae damage equal to half your Blood Sorcery (rounded up), and you recover the same amount of Vitae.",
+        "upgrade": "••: works on targets at short range. ••••: leaves no visible marks on the target. ••••••: you recover double the Vitae."
+      },
+      "hemokinesis": {
+        "name": "[homebrew] Hemokinesis",
+        "description": "You turn your own blood into a weapon. Bloody blades or whips emerge from your veins. Attack with a Dexterity + Blood Sorcery roll vs. the target's Stamina. Damage equals your Blood Sorcery and is normal, but leaves obvious traces.",
+        "upgrade": "•••: damage can be aggravated (fire/light). •••••: you can create a thrown weapon at short range."
+      },
+      "blood_of_potency": {
+        "name": "[homebrew] Blood of Potency",
+        "description": "You empower your own blood to temporarily raise one of your Disciplines. Roll a Power check. On success one chosen Discipline gains +1 to its rating until the end of the scene. It does not unlock new powers, but strengthens known ones.",
+        "upgrade": "•••: bonus +2. •••••: bonus +2 and applies to two different Disciplines."
+      },
+      "blood_puppetry": {
+        "name": "[homebrew] Blood Puppetry",
+        "description": "You take control of the blood in a visible target's body. Roll a Power check vs. Resolve. On success the target gains the 'Grappled' condition. On their turn they can spend an action to reroll Resolve vs. your Power to break free. You can move their body against their will through their blood. The target can resist only if it is at short range from you.",
+        "upgrade": "•••: the target can be at medium range. •••••: you can force the target to make one attack against an ally (it uses the target's action, not yours)."
+      },
+      "boiling_blood": {
+        "name": "[homebrew] Boiling Blood",
+        "description": "You boil the blood inside a visible target. Roll a Power check vs. Stamina. On success the target takes normal Vitae damage equal to your Blood Sorcery and gains the 'Depleted' condition until the end of the scene. The target cannot heal these Vitae damage with Vitae until the end of the next night.",
+        "upgrade": "••••: 'Depleted' lasts until the end of the scene. ••••••: affects all targets at near range."
+      },
+      "blood_ritual": {
+        "name": "[homebrew] Blood Ritual",
+        "description": "You perform a ritual using your own blood. Choose an effect: damage all enemies in the room, receive a vision of the future, curse a target, or create a protective field. The Power check and exact cost are set by the Storyteller based on the chosen effect.",
+        "upgrade": "••••: the ritual lasts until the end of the night. ••••••: the ritual lasts until the end of the story."
+      }
+    },
+    "necromancy": {
+      "sight_of_dead": {
+        "name": "[homebrew] Sight of the Dead",
+        "description": "You sharpen your sight to see ghosts and traces of death. While active, you notice ghosts, hidden incorporeal beings, and traces of recent death (within the scene). Rolls to detect such entities gain a bonus equal to your Necromancy.",
+        "upgrade": "••: you can speak with ghosts. ••••: you can tell true memories from false ones. ••••••: you see ghosts at long range."
+      },
+      "deathly_chill": {
+        "name": "[homebrew] Deathly Chill",
+        "description": "You touch the target and grave cold seeps into their body. Roll a Power check vs. Stamina. On success the target takes Vitae damage equal to your Necromancy and gains -1 to all physical checks until the end of their next turn.",
+        "upgrade": "••: the penalty lasts until the end of the scene. ••••: it also deals Willpower damage equal to half your Necromancy. ••••••: the target gains the 'Depleted' condition."
+      },
+      "speak_with_dead": {
+        "name": "[homebrew] Speak with Dead",
+        "description": "Touching a corpse, you ask it one question. Roll a Power check vs. Resolve (or a Difficulty set by the Storyteller). On success the corpse answers truthfully, but briefly and only from what it knew in life.",
+        "upgrade": "••: you can ask three questions. ••••: five questions, and the corpse answers in more detail. ••••••: you can speak with the spirit, not the body, even if the body was destroyed."
+      },
+      "ghostly_servant": {
+        "name": "[homebrew] Ghostly Servant",
+        "description": "You summon the spirit of the recently dead and force it to serve you. Roll a Power check vs. the spirit's Resolve. On success the spirit performs one simple task (spying, moving an object, searching). It cannot deal physical damage.",
+        "upgrade": "•••: the spirit serves until the end of the scene. •••••: the spirit can use one of its abilities from life. ••••••: you summon an ancient spirit with broader powers."
+      },
+      "command_dead": {
+        "name": "[homebrew] Command the Dead",
+        "description": "You raise a corpse and turn it into an obedient servant. Roll a Power check vs. the target's Stamina. On success the corpse acts as a Minion with Level equal to your Necromancy and follows your commands. It remains active until the end of the scene.",
+        "upgrade": "•••: the corpse remains active until the end of the night. ••••: you can raise a number of corpses equal to half your Necromancy. ••••••: raised corpses retain some abilities from life."
+      },
+      "deaths_kiss": {
+        "name": "[homebrew] Death's Kiss",
+        "description": "You touch the target and life leaves their body. Roll a Power check vs. Stamina. On success the target takes normal Vitae damage equal to your Necromancy. If the target's Vitae pool drops to 0 from this attack, it immediately crumbles to dust (Final Death), even if it is a vampire.",
+        "upgrade": "••••: the damage becomes normal but cannot be healed until the end of the night. ••••••: the target gains the 'Paralyzed' condition until the end of their next turn."
+      },
+      "dead_flesh": {
+        "name": "[homebrew] Dead Flesh",
+        "description": "You turn your flesh dead and numb to pain. While active, you reduce all incoming damage by half your Necromancy (minimum 1). This reduction does not stack with other damage-reduction effects (e.g., from Fortitude).",
+        "upgrade": "••••: the reduction equals your full Necromancy. ••••••: you also gain a bonus to resist Frenzy and to social checks involving fear."
+      },
+      "bound_spirit": {
+        "name": "[homebrew] Bound Spirit",
+        "description": "You bind a spirit to an object or place. Roll a Power check vs. the spirit's Resolve. On success the spirit is trapped in the object and must answer questions or follow commands until freed. It can only be released by power exceeding your Necromancy.",
+        "upgrade": "••••: the spirit stays bound until the end of the story. ••••••: you can bind several spirits at once."
+      }
+    },
+    "tellurgy": {
+      "evil_eye": {
+        "name": "[homebrew] Evil Eye",
+        "description": "You meet the target's gaze and lay a hex on them. Roll a Power check vs. Resolve. On success the target gains -1 to all checks until the end of their next turn. Applying it again stacks.",
+        "upgrade": "••: the penalty lasts until the end of the scene. ••••: penalty -2. ••••••: the target also gains the 'Frightened' condition."
+      },
+      "natures_bond": {
+        "name": "[homebrew] Nature's Bond",
+        "description": "You attune to the natural forces around you. While active, you sense living beings at short range, can tell the direction and rough distance to the nearest water source, and feel weather changes an hour before they happen.",
+        "upgrade": "••: the range increases to medium. ••••: you can speak with plants. ••••••: you sense living beings at long range and can identify their species."
+      },
+      "bad_luck": {
+        "name": "[homebrew] Bad Luck",
+        "description": "You lay a streak of bad luck on the target. Roll a Power check vs. Composure. On success the target gains -1 to their next check. If that check fails, the penalty repeats on the next one.",
+        "upgrade": "••: the penalty affects a number of checks equal to your Tellurgy. ••••: the penalty is -2. ••••••: the target cannot use Surge until the end of the scene."
+      },
+      "curse": {
+        "name": "[homebrew] Curse",
+        "description": "You curse the target. Roll a Power check vs. Resolve. On success the target gains one condition of your choice: 'Frightened', 'Agitated', or 'Depleted' until the end of the scene. The Storyteller may offer a different effect fitting the circumstances.",
+        "upgrade": "•••: the condition lasts until the end of the night. •••••: you can apply two conditions at once. ••••••: the curse passes to the next generation — the target's descendants also suffer."
+      },
+      "fortune": {
+        "name": "[homebrew] Fortune",
+        "description": "You attract luck to yourself or an ally. Roll a Power check. On success the target gains +1 to their next check. If the target is already using Surge on this roll, add an additional +1 die. If that check succeeds, the bonus repeats on the next one.",
+        "upgrade": "•••: the bonus affects a number of checks equal to your Tellurgy. •••••: bonus +2. ••••••: the target gains 1 Surge if the check with the bonus succeeds."
+      },
+      "destinys_whisper": {
+        "name": "[homebrew] Destiny's Whisper",
+        "description": "You receive a vision of possible futures. Roll a Power check. On success you ask the Storyteller one question about what might happen soon (within the current scene or night) and get a truthful but symbolic answer.",
+        "upgrade": "•••: you can ask three questions. •••••: you can ask about the longer term (until the end of the story). ••••••: the vision shows not just possible but the most likely future."
+      },
+      "fates_hand": {
+        "name": "[homebrew] Fate's Hand",
+        "description": "You alter probability around the target. Roll a Power check vs. Resolve. On success you can, once per scene, force the target to reroll one check (successful or failed).",
+        "upgrade": "••••: the target rerolls two checks per scene. ••••••: you can force the reroll even if the target already spent Surge on that roll."
+      },
+      "doom": {
+        "name": "[homebrew] Doom",
+        "description": "You bring the full weight of fate down on the target. Roll a Power check vs. Resolve. On success choose one category: Physical, Social, or Mental checks. The target gains -2 to the chosen category until the end of the scene and cannot gain Surge.",
+        "upgrade": "••••: the target also gains the 'Depleted' condition for the whole scene. ••••••: the target cannot use Surge until the end of the story."
+      }
+    },
+    "vicissitude": {
+      "fleshcraft": {
+        "name": "[homebrew] Fleshcraft",
+        "description": "You reshape your own flesh: thicken skin, change features, create folds. Roll a Power check. On success you can change one aspect of your appearance (e.g., make yourself unrecognizable or hide scars) until the end of the scene.",
+        "upgrade": "••: the changes last until the end of the night. ••••: you can change another being's appearance by touching them. ••••••: the changes are permanent."
+      },
+      "bone_spurs": {
+        "name": "[homebrew] Bone Spurs",
+        "description": "You extend sharp spurs of bone from your skeleton. While active, your unarmed attacks deal damage equal to your Strength.",
+        "upgrade": "••: damage equals Strength + 1. ••••: damage equals Strength + 2. ••••••: the spurs can be thrown at short range."
+      },
+      "malleable_visage": {
+        "name": "[homebrew] Malleable Visage",
+        "description": "You can change minor facial features (hair color, eye color, nose shape), but cannot change height, build, or fully hide your identity. You gain +1 die to Stealth checks. Changes last until the end of the scene. Changes do not grant advantages in social conflicts against those who know about your ability to alter your appearance.",
+        "upgrade": "••: the changes last until the end of the night. ••••: you can change another being's appearance by touching them. ••••••: the changes are permanent."
+      },
+      "mold_flesh": {
+        "name": "[homebrew] Mold Flesh",
+        "description": "You reshape another being's flesh. Roll a Power check vs. Stamina. On success the target gains the 'Maimed' condition on a chosen limb until the end of the scene (see Maimed limb rules).",
+        "upgrade": "•••: the condition lasts until the end of the night. •••••: you can change the target's appearance (make them unrecognizable). ••••••: the changes are permanent."
+      },
+      "horrid_form": {
+        "name": "[homebrew] Horrid Form",
+        "description": "You transform into a monstrous creature. Roll a Power check. On success you gain +1 Strength and +1 Stamina (this counts as Blood Surge), but cannot speak or use social Discipline powers. Lasts until the end of the scene.",
+        "upgrade": "•••: bonus +2 Strength. •••••: bonus +1 Stamina. ••••••: you retain the ability to speak."
+      },
+      "chiropteran_marauder": {
+        "name": "[homebrew] Chiropteran Marauder",
+        "description": "You transform into a swarm of bats or a single giant bat. Roll a Power check. On success you can fly at short range and gain a stealth bonus equal to your Vicissitude until the end of the scene. While flying, you cannot make melee attacks unless you land.",
+        "upgrade": "•••: flight at medium range. •••••: flight at long range and a bonus to stealth from hearing. ••••••: you can transform into other animals."
+      },
+      "blood_of_tzimisce": {
+        "name": "[homebrew] Blood of the Tzimisce",
+        "description": "You channel the power of your blood into flesh. Roll a Power check. On success you can raise one of your Attributes — Strength, Dexterity, or Stamina — by +1 until the end of the scene (this counts as Blood Surge and follows its limits).",
+        "upgrade": "••••: bonus +2. ••••••: bonus +2 and you can change two different Attributes."
+      },
+      "vicissitude_mastery": {
+        "name": "[homebrew] Vicissitude Mastery",
+        "description": "You achieve mastery over flesh-shaping. Roll a Power check vs. the target's Stamina. On success you can fully rebuild the target's body: change their appearance, make them unrecognizable, give them deformities, or heal scars. The effect is permanent.",
+        "upgrade": "••••: the effect can only be removed by power exceeding your Vicissitude. ••••••: you can reshape supernatural beings, including vampires."
       }
     }
   },

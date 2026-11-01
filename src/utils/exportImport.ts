@@ -1,4 +1,4 @@
-import { toCanvas, getFontEmbedCSS } from 'html-to-image';
+import { toCanvas } from 'html-to-image';
 import { jsPDF } from 'jspdf';
 import { CharacterSheet } from '../types';
 import { THEMES } from '../themes';
@@ -10,13 +10,25 @@ const sanitizeName = (name: string) =>
     .trim() || 'Character';
 
 export const exportJSON = (character: CharacterSheet) => {
-  const blob = new Blob([JSON.stringify(character, null, 2)], { type: 'application/json' });
+  const jsonString = JSON.stringify(character, null, 2);
+  // Добавляем BOM (\uFEFF) для корректного отображения кириллицы в Windows
+  const blob = new Blob(['\uFEFF' + jsonString], { type: 'application/json;charset=utf-8' });
   const url = URL.createObjectURL(blob);
+  
   const a = document.createElement('a');
+  a.style.display = 'none';
   a.href = url;
   a.download = `VTM6E_${sanitizeName(character.meta.name)}.json`;
+  
+  // Обязательно добавляем в DOM, иначе некоторые браузеры игнорируют клик
+  document.body.appendChild(a);
   a.click();
-  URL.revokeObjectURL(url);
+  
+  // Задержка перед удалением, чтобы браузер успел начать скачивание
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, 100);
 };
 
 export const importJSONFile = (
@@ -55,7 +67,6 @@ const getThemeBg = (): string => {
 };
 
 let fontsReadyPromise: Promise<FontFaceSet> | null = null;
-let fontEmbedCache: string | null = null;
 
 const isMobileDevice = () => /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 
@@ -67,7 +78,7 @@ const renderPageToCanvas = async (
   const original = document.getElementById(elementId);
   if (!original) return null;
 
-  const width = 794;
+  const width = 794; // Ширина A4 в пикселях (210мм при 96 DPI)
 
   const container = document.createElement('div');
   container.style.cssText = `position:fixed;top:0;left:-9999px;width:${width}px;z-index:-9999;`;
@@ -75,7 +86,7 @@ const renderPageToCanvas = async (
 
   const clone = original.cloneNode(true) as HTMLElement;
 
-  // 1. Считываем ВСЕ текущие переменные темы из корня документа
+  // 1. Читаем переменные темы
   const rootStyle = getComputedStyle(document.documentElement);
   const themeVars = {
     bg: rootStyle.getPropertyValue('--bg').trim() || '#ffffff',
@@ -92,12 +103,10 @@ const renderPageToCanvas = async (
     'input-bg': rootStyle.getPropertyValue('--input-bg').trim() || '#ffffff',
   };
 
-  // Применяем их явно к клону, чтобы html-to-image их "увидел"
   Object.entries(themeVars).forEach(([k, v]) => {
     clone.style.setProperty(`--${k}`, v);
   });
 
-  // 2. Принудительно применяем Classic (если выбрано)
   if (forceClassic) {
     const classic = THEMES.find(t => t.id === 'classic')!;
     clone.style.setProperty('--bg', classic.bg);
@@ -116,8 +125,7 @@ const renderPageToCanvas = async (
   // 3. Убираем фон (экономия чернил)
   if (removeBackground) {
     // Переопределяем ТОЛЬКО фон и текст, чтобы экономить чернила.
-    // Акцентные цвета (--accent, --border, --dot-color, --header-bg, --card-border) НЕ ТРОГАЕМ,
-    // чтобы лист сохранил свою цветовую идентичность.
+    // Акцентные цвета (--accent, --border, --dot-color) НЕ ТРОГАЕМ.
     clone.style.setProperty('--bg', '#ffffff');
     clone.style.setProperty('--panel', '#ffffff');
     clone.style.setProperty('--input-bg', '#ffffff');
@@ -134,9 +142,9 @@ const renderPageToCanvas = async (
     clone.appendChild(style);
   }
 
-  const bgColor = removeBackground ? '#ffffff' : (forceClassic ? '#ffffff' : getThemeBg());
+  const bgColor = removeBackground ? '#ffffff' : (forceClassic ? '#ffffff' : themeVars.bg);
 
-  // Синхронизация форм
+  // 2. Синхронизация форм
   const origInputs = original.querySelectorAll('input, textarea, select');
   const cloneInputs = clone.querySelectorAll('input, textarea, select');
   origInputs.forEach((origEl, i) => {
@@ -144,9 +152,11 @@ const renderPageToCanvas = async (
     if (!cloneEl) return;
     if (origEl instanceof HTMLInputElement) {
       cloneEl.value = origEl.value;
+      cloneEl.setAttribute('value', origEl.value);
       if (origEl.type === 'checkbox') (cloneEl as HTMLInputElement).checked = origEl.checked;
     } else if (origEl instanceof HTMLTextAreaElement) {
       cloneEl.value = origEl.value;
+      cloneEl.innerHTML = origEl.value;
     } else if (origEl instanceof HTMLSelectElement) {
       cloneEl.value = origEl.value;
     }
@@ -156,11 +166,11 @@ const renderPageToCanvas = async (
   clone.querySelectorAll('[id]').forEach(n => n.removeAttribute('id'));
   clone.querySelectorAll('.no-print, [class*="no-print"]').forEach(n => n.remove());
 
+  // 3. Настройка размеров клона (высота auto, чтобы ничего не обрезалось)
   Object.assign(clone.style, {
     width: `${width}px`,
     height: 'auto',
-    minHeight: 'auto',
-    maxHeight: 'none',
+    minHeight: '1122px',
     margin: '0',
     padding: '10mm',
     border: 'none',
@@ -171,7 +181,70 @@ const renderPageToCanvas = async (
 
   container.appendChild(clone);
 
-  // <select> → div
+  // 4. Замена <input> на <div> с сохранением Flexbox
+  clone.querySelectorAll('input').forEach(inp => {
+    if ((inp as HTMLInputElement).type === 'checkbox') return;
+    const el = inp as HTMLInputElement;
+    const cs = window.getComputedStyle(el);
+
+    const div = document.createElement('div');
+    div.textContent = el.value || '';
+    
+    div.style.fontFamily = cs.fontFamily;
+    div.style.fontSize = cs.fontSize;
+    div.style.color = el.value ? cs.color : 'var(--muted)';
+    div.style.padding = cs.padding;
+    div.style.backgroundColor = cs.backgroundColor;
+    div.style.border = '1px solid var(--border)';
+    div.style.boxSizing = 'border-box';
+    
+    // КРИТИЧЕСКИ ВАЖНО: сохраняем размеры инпута
+    div.style.width = cs.width;
+    div.style.height = cs.height;
+    div.style.flex = cs.flex;
+    div.style.flexShrink = cs.flexShrink;
+    div.style.minWidth = cs.minWidth;
+    
+    div.style.whiteSpace = 'nowrap';
+    div.style.overflow = 'hidden';
+    div.style.textOverflow = 'ellipsis';
+    div.style.display = 'flex';
+    div.style.alignItems = 'center';
+    div.style.justifyContent = cs.textAlign === 'center' ? 'center' : 'flex-start';
+
+    el.parentNode?.replaceChild(div, el);
+  });
+
+  // 5. Замена <textarea> на <div> с сохранением Flexbox
+  clone.querySelectorAll('textarea').forEach(ta => {
+    const el = ta as HTMLTextAreaElement;
+    const cs = window.getComputedStyle(el);
+    const div = document.createElement('div');
+    div.textContent = el.value || '';
+    
+    div.style.fontFamily = cs.fontFamily;
+    div.style.fontSize = cs.fontSize;
+    div.style.lineHeight = cs.lineHeight;
+    div.style.color = el.value ? cs.color : 'var(--muted)';
+    div.style.backgroundColor = cs.backgroundColor;
+    div.style.padding = cs.padding;
+    div.style.border = '1px solid var(--border)';
+    div.style.boxSizing = 'border-box';
+    div.style.whiteSpace = 'pre-wrap';
+    div.style.overflowWrap = 'break-word';
+    div.style.overflow = 'hidden';
+    
+    div.style.width = cs.width;
+    div.style.height = cs.height;
+    div.style.flex = cs.flex;
+    div.style.flexShrink = cs.flexShrink;
+    div.style.minWidth = cs.minWidth;
+    div.style.minHeight = cs.minHeight;
+
+    el.parentNode?.replaceChild(div, el);
+  });
+
+  // 6. Замена <select> и чекбоксов
   clone.querySelectorAll('select').forEach(sel => {
     const text = sel.options[sel.selectedIndex]?.text || '';
     const cs = window.getComputedStyle(sel);
@@ -193,7 +266,6 @@ const renderPageToCanvas = async (
     sel.parentNode?.replaceChild(div, sel);
   });
 
-  // Чекбоксы → div
   clone.querySelectorAll('input[type="checkbox"]').forEach(cb => {
     const isChecked = (cb as HTMLInputElement).checked;
     const div = document.createElement('div');
@@ -202,91 +274,19 @@ const renderPageToCanvas = async (
     div.style.border = '1px solid var(--border)';
     div.style.background = isChecked ? 'var(--accent)' : 'transparent';
     div.style.flexShrink = '0';
+    div.style.display = 'inline-block';
     cb.parentNode?.replaceChild(div, cb);
   });
 
-  // Текстовые поля <input> → div
-  clone.querySelectorAll('input').forEach(inp => {
-    if ((inp as HTMLInputElement).type === 'checkbox') return;
-
-    const el = inp as HTMLInputElement;
-    const cs = window.getComputedStyle(el);
-
-    const div = document.createElement('div');
-    div.textContent = el.value || '';
-
-    div.style.fontFamily = cs.fontFamily;
-    div.style.fontSize = cs.fontSize;
-    div.style.color = cs.color;
-    div.style.padding = cs.padding;
-    div.style.backgroundColor = cs.backgroundColor;
-    div.style.border = '1px solid var(--border)';
-    div.style.boxSizing = 'border-box';
-
-    div.style.width = '100%';
-    div.style.height = cs.height;
-    div.style.flex = cs.flex || '1';
-    div.style.minWidth = '0';
-
-    div.style.whiteSpace = 'nowrap';
-    div.style.overflow = 'hidden';
-    div.style.textOverflow = 'ellipsis';
-
-    div.style.display = 'flex';
-    div.style.alignItems = 'center';
-    div.style.justifyContent = cs.textAlign === 'center' ? 'center' : 'flex-start';
-
-    el.parentNode?.replaceChild(div, el);
-  });
-
-  // Текстареи → div
-  clone.querySelectorAll('textarea').forEach(ta => {
-    const el = ta as HTMLTextAreaElement;
-    const cs = window.getComputedStyle(el);
-    const div = document.createElement('div');
-    div.textContent = el.value || '';
-    div.style.fontFamily = cs.fontFamily;
-    div.style.fontSize = cs.fontSize;
-    div.style.lineHeight = cs.lineHeight;
-    div.style.color = cs.color;
-    div.style.backgroundColor = cs.backgroundColor;
-    div.style.padding = cs.padding;
-    div.style.border = '1px solid var(--border)';
-    div.style.boxSizing = 'border-box';
-    div.style.whiteSpace = 'pre-wrap';
-    div.style.overflowWrap = 'break-word';
-    div.style.overflow = 'hidden';
-    div.style.flex = cs.flex || '1';
-    div.style.minHeight = '0';
-    div.style.minWidth = '0';
-    el.parentNode?.replaceChild(div, el);
-  });
-
-  // Убираем нативные артефакты кнопок и инпутов
   const styleReset = document.createElement('style');
   styleReset.textContent = `
-    * {
-      -webkit-appearance: none !important;
-      -moz-appearance: none !important;
-      appearance: none !important;
-      outline: none !important;
-      box-shadow: none !important;
-      text-shadow: none !important;
-    }
+    * { -webkit-appearance: none !important; -moz-appearance: none !important; appearance: none !important; outline: none !important; box-shadow: none !important; text-shadow: none !important; }
   `;
   clone.appendChild(styleReset);
 
   try {
     if (!fontsReadyPromise) fontsReadyPromise = document.fonts.ready;
     await fontsReadyPromise;
-
-    if (fontEmbedCache === null) {
-      try {
-        fontEmbedCache = await getFontEmbedCSS(clone);
-      } catch {
-        fontEmbedCache = '';
-      }
-    }
 
     const actualHeight = Math.ceil(clone.getBoundingClientRect().height);
     const pixelRatio = isMobileDevice() ? 2 : 3;
@@ -297,11 +297,14 @@ const renderPageToCanvas = async (
       width,
       height: actualHeight,
     };
-    if (fontEmbedCache !== null) {
-      options.fontEmbedCSS = fontEmbedCache;
-    }
 
-    return await toCanvas(clone, options);
+    try {
+      return await toCanvas(clone, options);
+    } catch (e) {
+      console.warn("Export failed, falling back to ratio 1", e);
+      options.pixelRatio = 1;
+      return await toCanvas(clone, options);
+    }
   } finally {
     document.body.removeChild(container);
   }
@@ -314,7 +317,6 @@ export const exportAllPDFs = async (
   removeBackground: boolean = false
 ) => {
   fontsReadyPromise = null;
-  fontEmbedCache = null;
 
   try {
     const sheetElements = Array.from(document.querySelectorAll<HTMLElement>('.sheet-page'));
@@ -337,14 +339,18 @@ export const exportAllPDFs = async (
       }
 
       if (pageAdded > 0) pdf.addPage();
-      const imgData = canvas.toDataURL('image/jpeg', 0.93);
+      
+      // Генерируем картинку в PNG (четкий текст)
+      const imgData = canvas.toDataURL('image/png');
 
+      // Высчитываем пропорции, чтобы вписать в А4
       const scale = Math.min(pdfW / canvas.width, pdfH / canvas.height);
       const renderW = canvas.width * scale;
       const renderH = canvas.height * scale;
       const offsetX = (pdfW - renderW) / 2;
 
-      pdf.addImage(imgData, 'JPEG', offsetX, 0, renderW, renderH);
+      // ВАЖНО: здесь тоже меняем 'JPEG' на 'PNG'
+      pdf.addImage(imgData, 'PNG', offsetX, 0, renderW, renderH);
 
       canvas.width = 0;
       canvas.height = 0;
@@ -360,6 +366,5 @@ export const exportAllPDFs = async (
     throw error;
   } finally {
     fontsReadyPromise = null;
-    fontEmbedCache = null;
   }
 };

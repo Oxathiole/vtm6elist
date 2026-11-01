@@ -1,19 +1,18 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, Suspense, lazy } from 'react';
 import { useCharacterStore } from './store';
 import { CharacterSelector } from './components/CharacterSelector';
-import i18n, { t } from './i18n';
+import i18n, { t, loadAndChangeLanguage } from './i18n';
 import { VAMPIRE_TYPES, CREATION_RULES } from './types';
-import { exportJSON, importJSONFile, exportAllPDFs } from './utils/exportImport';
 import { safeStorage } from './utils/storage';
 import { THEMES, DEFAULT_THEME_ID } from './themes';
 import { useUIStore } from './uiStore';
 import { api } from './utils/api';
 import { AuthScreen } from './components/AuthScreen';
-import { Download, Upload, FileJson, RotateCcw, Menu, X, Send, BookOpen, Globe, History as HistoryIcon, HelpCircle, Smartphone, Moon, RefreshCw } from 'lucide-react';
+import { Download, Upload, FileJson, RotateCcw, Menu, X, Send, BookOpen, Globe, History as HistoryIcon, HelpCircle, Moon } from 'lucide-react';
 import { NavLink, Navigate, Routes, Route } from 'react-router-dom';
-import { SheetPage } from './pages/SheetPage';
-import { MasterRoute } from './pages/MasterRoute';
-import { AccountRoute } from './pages/AccountRoute';
+const SheetPage = lazy(() => import('./pages/SheetPage').then(m => ({ default: m.SheetPage })));
+const MasterRoute = lazy(() => import('./pages/MasterRoute').then(m => ({ default: m.MasterRoute })));
+const AccountRoute = lazy(() => import('./pages/AccountRoute').then(m => ({ default: m.AccountRoute })));
 
 const NavTab = ({ to, label, end }: { to: string; label: string; end?: boolean }) => (
   <NavLink
@@ -48,7 +47,8 @@ function App() {
     safeStorage.set('vtm6e-tips', showTips.toString());
   }, [showTips]);
 
-  const [showSummary, setShowSummary] = useState(true);
+  const [showSummary, setShowSummary] = useState<boolean>(() => safeStorage.get('vtm6e-summary') !== 'false');
+  useEffect(() => { safeStorage.set('vtm6e-summary', showSummary.toString()); }, [showSummary]);
   const [showHistory, setShowHistory] = useState(false);
   
   // Состояния для экспорта PDF
@@ -90,10 +90,12 @@ function App() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const { getActive, loadCharacter, loadCharacters, resetActiveCharacter, addPowerPage, history, pushHistory, clearHistory, advanceNight, resetBloodSurge } = useCharacterStore();
-  const { mobileMode, setMobileMode } = useUIStore();
+  const character = useCharacterStore(s => s.characters.find(c => c.id === s.activeId) || s.characters[0]);
+  const history = useCharacterStore(s => s.history);
+  const pushHistory = useCharacterStore(s => s.pushHistory);
+  const clearHistory = useCharacterStore(s => s.clearHistory);
+  const advanceNight = useCharacterStore(s => s.advanceNight);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const character = getActive();
   const prevCharRef = useRef(character);
 
   // Загрузка персонажей с сервера при авторизации
@@ -202,6 +204,7 @@ function App() {
     setPdfProgress({ current: 0, total: 0 });
     
     try {
+      const { exportAllPDFs } = await import('./utils/exportImport');
       const active = useCharacterStore.getState().getActive();
       await exportAllPDFs(active.meta.name, (current, total) => {
         setPdfProgress({ current, total });
@@ -228,14 +231,16 @@ function App() {
     return found ? t(found.label) : character.meta.type;
   })();
 
-  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    const { importJSONFile } = await import('./utils/exportImport');
     importJSONFile(
       file,
       (data) => {
-        if (Array.isArray(data)) loadCharacters(data);
-        else loadCharacter(data);
+        const st = useCharacterStore.getState();
+        if (Array.isArray(data)) st.loadCharacters(data);
+        else st.loadCharacter(data);
       },
       (err) => alert(err)
     );
@@ -334,13 +339,11 @@ function App() {
 
           <CharacterSelector />
         
-          {!mobileMode && (
-            <div style={{ display: 'flex', gap: '6px' }}>
+          <div style={{ display: 'flex', gap: '6px' }}>
               <NavTab to="/sheet" end label={t('nav.sheet')} />
               <NavTab to="/master" label={t('nav.master')} />
               <NavTab to="/account" label={t('nav.account')} />
             </div>
-          )}
         
           <div style={{ height: '20px', width: '1px', background: 'var(--border)' }} />
 
@@ -354,7 +357,7 @@ function App() {
               <span style={{ position: 'absolute', top: '-6px', left: '50%', transform: 'translateX(-50%)', fontSize: '7px', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.1em', pointerEvents: 'none' }}>rule</span>
               <BookOpen size={16} />
             </button>
-            <button className="icon-btn" onClick={() => exportJSON(character)} title={t('common.export_json')} style={{ position: 'relative' }} disabled={isExporting}>
+            <button className="icon-btn" onClick={async () => { const { exportJSON } = await import('./utils/exportImport'); exportJSON(character); }} title={t('common.export_json')} style={{ position: 'relative' }} disabled={isExporting}>
               <span style={{ position: 'absolute', top: '-6px', left: '50%', transform: 'translateX(-50%)', fontSize: '7px', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.1em', pointerEvents: 'none' }}>json</span>
               <FileJson size={16} />
             </button>
@@ -362,7 +365,7 @@ function App() {
               <span style={{ position: 'absolute', top: '-6px', left: '50%', transform: 'translateX(-50%)', fontSize: '7px', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.1em', pointerEvents: 'none' }}>imp</span>
               <Upload size={16} />
             </button>
-            <button className="icon-btn" onClick={() => { if (confirm(t('placeholders.clear_sheet'))) resetActiveCharacter(); }} title={t('common.reset')} style={{ position: 'relative' }} disabled={isExporting}>
+            <button className="icon-btn" onClick={() => { if (confirm(t('placeholders.clear_sheet'))) useCharacterStore.getState().resetActiveCharacter(); }} title={t('common.reset')} style={{ position: 'relative' }} disabled={isExporting}>
               <span style={{ position: 'absolute', top: '-6px', left: '50%', transform: 'translateX(-50%)', fontSize: '7px', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.1em', pointerEvents: 'none' }}>clear</span>
               <RotateCcw size={16} />
             </button>
@@ -378,19 +381,6 @@ function App() {
                 textTransform: 'uppercase', letterSpacing: '0.1em', pointerEvents: 'none',
               }}>night</span>
               <Moon size={16} />
-            </button>
-            <button
-              className="icon-btn"
-              onClick={() => { if (confirm(t('common.end_session_confirm'))) resetBloodSurge(); }}
-              title={t('common.end_session')}
-              style={{ position: 'relative' }}
-            >
-              <span style={{
-                position: 'absolute', top: '-6px', left: '50%', transform: 'translateX(-50%)',
-                fontSize: '7px', color: 'var(--muted)',
-                textTransform: 'uppercase', letterSpacing: '0.1em', pointerEvents: 'none',
-              }}>end</span>
-              <RefreshCw size={16} />
             </button>
           </div>
 
@@ -478,7 +468,7 @@ function App() {
                 if (isExporting) return;
                 const currentLang = lang || i18n.language || 'ru';
                 const next = ['ru','en','zh'][(['ru','en','zh'].indexOf(currentLang) + 1) % 3];
-                i18n.changeLanguage(next).catch(console.error);
+                loadAndChangeLanguage(next).catch(console.error);
               }}
               title={t('ui.language')}
               style={{ position: 'relative', opacity: isExporting ? 0.5 : 1, cursor: isExporting ? 'not-allowed' : 'pointer' }}
@@ -488,22 +478,6 @@ function App() {
               <Globe size={16} />
             </button>
             
-            <button
-              className="icon-btn"
-              onClick={() => setMobileMode(!mobileMode)}
-              title={t('common.mobile_mode')}
-              style={{
-                position: 'relative',
-                color: mobileMode ? 'var(--accent)' : 'var(--muted)',
-              }}
-            >
-              <span style={{
-                position: 'absolute', top: '-6px', left: '50%', transform: 'translateX(-50%)',
-                fontSize: '7px', color: 'var(--muted)',
-                textTransform: 'uppercase', letterSpacing: '0.1em', pointerEvents: 'none',
-              }}>mob</span>
-              <Smartphone size={16} />
-            </button>
             <select value={themeId} onChange={(e) => setThemeId(e.target.value)} style={{ background: 'var(--panel)', border: `1px solid var(--border)`, color: 'var(--text)', padding: '3px 5px', fontSize: '12px', borderRadius: '4px', opacity: isExporting ? 0.5 : 1 }} disabled={isExporting}>
               {THEMES.map(th => <option key={th.id} value={th.id}>{th.name}</option>)}
             </select>
@@ -523,10 +497,10 @@ function App() {
               <NavLink to="/master" className="flex items-center gap-2 p-2 rounded" style={({ isActive }) => ({ background: isActive ? 'var(--accent)' : 'transparent', color: isActive ? 'var(--bg)' : 'var(--text)', border: `1px solid ${isActive ? 'var(--accent)' : 'var(--border)'}` })}>{t('nav.master')}</NavLink>
               <NavLink to="/account" className="flex items-center gap-2 p-2 rounded" style={({ isActive }) => ({ background: isActive ? 'var(--accent)' : 'transparent', color: isActive ? 'var(--bg)' : 'var(--text)', border: `1px solid ${isActive ? 'var(--accent)' : 'var(--border)'}` })}>{t('nav.account')}</NavLink>
               <button onClick={() => { setShowSummary(true); setMobileMenuOpen(false); }} className="flex items-center gap-2 p-2 rounded" style={{ background: 'transparent', color: 'var(--text)', border: `1px solid var(--border)` }}><BookOpen size={14} /> {t('common.summary_rules')}</button>
-              <button onClick={() => { exportJSON(character); setMobileMenuOpen(false); }} className="flex items-center gap-2 p-2 rounded" style={{ background: 'transparent', color: 'var(--text)', border: `1px solid var(--border)` }}><FileJson size={14} /> {t('common.export_json')}</button>
+              <button onClick={async () => { const { exportJSON } = await import('./utils/exportImport'); exportJSON(character); setMobileMenuOpen(false); }} className="flex items-center gap-2 p-2 rounded" style={{ background: 'transparent', color: 'var(--text)', border: `1px solid var(--border)` }}><FileJson size={14} /> {t('common.export_json')}</button>
               <button onClick={() => { fileInputRef.current?.click(); setMobileMenuOpen(false); }} className="flex items-center gap-2 p-2 rounded" style={{ background: 'transparent', color: 'var(--text)', border: `1px solid var(--border)` }}><Upload size={14} /> {t('common.import_json')}</button>
               <button onClick={() => { handleExportPdf(); setMobileMenuOpen(false); }} className="flex items-center gap-2 p-2 rounded" style={{ background: 'var(--accent)', color: 'var(--bg)' }}><Download size={14} /> {t('common.pdf_export')}</button>
-              <button onClick={() => { if (confirm(t('placeholders.clear_sheet'))) resetActiveCharacter(); setMobileMenuOpen(false); }} className="flex items-center gap-2 p-2 rounded" style={{ background: 'transparent', color: 'var(--muted)', border: `1px solid var(--border)` }}><RotateCcw size={14} /> {t('common.reset')}</button>
+              <button onClick={() => { if (confirm(t('placeholders.clear_sheet'))) useCharacterStore.getState().resetActiveCharacter(); setMobileMenuOpen(false); }} className="flex items-center gap-2 p-2 rounded" style={{ background: 'transparent', color: 'var(--muted)', border: `1px solid var(--border)` }}><RotateCcw size={14} /> {t('common.reset')}</button>
               <a href="https://t.me/Oxathioleph" target="_blank" rel="noreferrer" className="flex items-center gap-2 p-2 rounded" style={{ background: 'transparent', color: 'var(--text)', border: `1px solid var(--border)` }}><Send size={14} /> Telegram</a>
             </div>
           </div>
@@ -572,13 +546,15 @@ function App() {
 
       {/* MAIN CONTENT */}
       <main id="main-content" className="flex-1 p-2 md:p-6 pb-20 md:pb-6">
-        <Routes>
-          <Route path="/" element={<Navigate to="/sheet" replace />} />
-          <Route path="/sheet" element={<SheetPage showTips={showTips} handleExportPdf={handleExportPdf} />} />
-          <Route path="/master" element={<MasterRoute />} />
-          <Route path="/account" element={<AccountRoute />} />
-          <Route path="*" element={<Navigate to="/sheet" replace />} />
-        </Routes>
+        <Suspense fallback={<div style={{ padding: '20px', textAlign: 'center' }}>{t('pdf.preparing')}</div>}>
+          <Routes>
+            <Route path="/" element={<Navigate to="/sheet" replace />} />
+            <Route path="/sheet" element={<SheetPage showTips={showTips} handleExportPdf={handleExportPdf} />} />
+            <Route path="/master" element={<MasterRoute />} />
+            <Route path="/account" element={<AccountRoute />} />
+            <Route path="*" element={<Navigate to="/sheet" replace />} />
+          </Routes>
+        </Suspense>
       </main>
       
       <div style={{ textAlign: 'center', padding: '8px 0 4px', fontSize: '11px', color: 'var(--muted)', fontFamily: "'Cinzel', serif", letterSpacing: '0.15em' }}>
