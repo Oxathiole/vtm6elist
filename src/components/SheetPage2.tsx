@@ -4,6 +4,7 @@ import { DashedDotRating } from './DashedDotRating';
 import { useTranslation } from 'react-i18next';
 import { NATURES_LIST, ALL_LIFE_PATHS, MORTAL_LIFE_PATHS, VAMPIRE_LIFE_PATHS, DISCIPLINES_LIST } from '../types';
 import { useIsMobile } from '../hooks/useIsMobile';
+import { getDisciplineCap } from '../utils/limits';
 
 const AnkhIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -42,6 +43,7 @@ export const SheetPage2 = () => {
   const lineSize    = n <= 6 ? 12  : n <= 8 ? 11 : 9;
 
   const slots = Math.max(1, character.disciplines.length);
+  const discCap = getDisciplineCap(character.meta.type, false);
 
   return (
     <div id="character-sheet-2" className="sheet-page" style={{ ...sheetStyle, width: isMobile ? '100%' : '210mm' }}>
@@ -99,7 +101,7 @@ export const SheetPage2 = () => {
                       style={{ flex: 1, minWidth: 0, background: 'transparent', border: 'none', outline: 'none', fontWeight: 'bold', color: 'var(--text)', padding: '2px 4px', fontSize: `${nameSize}px`, fontFamily: "'Georgia', serif" }}
                     />
                     <div style={{ flexShrink: 0 }}>
-                      <DashedDotRating total={5} value={disc.dots} onChange={(v) => updateDiscipline(i, 'dots', v)} />
+                      <DashedDotRating total={Math.max(discCap, disc.dots)} value={disc.dots} onChange={(v) => updateDiscipline(i, 'dots', v)} />
                     </div>
                   </div>
 

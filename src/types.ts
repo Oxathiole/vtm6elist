@@ -1,4 +1,13 @@
 
+export type AttributePriority = 7 | 5 | 3;
+export type AttributeCategory = 'physical' | 'social' | 'mental';
+
+export interface AttributePriorityMap {
+  physical: AttributePriority;
+  social: AttributePriority;
+  mental: AttributePriority;
+}
+
 export interface CharacterSheet {
   id: string;
   meta: {
@@ -16,6 +25,7 @@ export interface CharacterSheet {
     sire: string;
     sireType: string;
     sireDiscipline: string;
+    attributePriority?: AttributePriorityMap;
   };
   attributes: {
     physical: { strength: number; dexterity: number; stamina: number };
@@ -167,7 +177,6 @@ export const VAMPIRE_TYPES: Array<{ id: string; label: string }> = [
   { id: 'ancilla', label: 'creation_types.ancilla' },
   { id: 'elder', label: 'creation_types.elder' },
   { id: 'duskborn', label: 'creation_types.duskborn' },
-  { id: 'thin_blood', label: 'creation_types.thin_blood' },
 ];
 
 export const SIRE_TYPES_LIST: Array<{ id: string; label: string }> = [
@@ -292,7 +301,6 @@ export const VAMPIRE_TYPE_TO_GENERATION: Record<string, string> = {
   'ancilla':         '10',
   'elder':          '8',
   'duskborn':       '15',
-  'thin_blood':     '15',
 };
 
 // ============================================================
@@ -326,7 +334,7 @@ const RU_TO_ID: Record<string, string> = {
 
   // Виды вампиров
   'Вампир (неонат)': 'vampire_neonate', 'Анцилла': 'ancilla', 'Старейшина': 'elder',
-  'Веспер': 'duskborn', 'Тонкий': 'thin_blood',
+  'Веспер': 'duskborn', 'Тонкий': 'duskborn',
   'vampire_elder': 'elder', 'vampire_ancilla': 'ancilla',
 
   // Жизненные пути (мёртвые)
@@ -351,23 +359,22 @@ const RU_TO_ID: Record<string, string> = {
 
 interface CreationRules {
   paths: number;
-  attrs: string;
-  disc: string;
-  powers: number;
-  merits: number;
-  traits: number | string;
-  skills: number;
-  resources: number;
+  attrs: string;        // '7/5/3'
+  disc: string;         // '3+1'
+  powers: number;       // 4
+  merits: number;       // 1
+  traits: number | string; // 2
+  skills: string;       // '8 + 5 + 5 = 18'
+  resources: string;    // '3 + 3 + 3 = 9'
   maxDisc: number;
   maxAttr: number;
 }
 
 export const CREATION_RULES: Record<string, CreationRules> = {
-  'vampire_neonate': { paths: 2, attrs: '7/5/3', disc: '3+1', powers: 4, merits: 1, traits: 2, skills: 8, resources: 3, maxDisc: 5, maxAttr: 5 },
-  'ancilla': { paths: 3, attrs: '8/6/4', disc: '5+1', powers: 6, merits: 2, traits: 3, skills: 8, resources: 5, maxDisc: 6, maxAttr: 6 },
-  'elder': { paths: 4, attrs: '9/7/5', disc: '7+1', powers: 8, merits: 3, traits: 4, skills: 8, resources: 7, maxDisc: 8, maxAttr: 8 },
-  'duskborn': { paths: 2, attrs: '6/4/3', disc: '2+1', powers: 3, merits: 1, traits: 1, skills: 8, resources: 2, maxDisc: 5, maxAttr: 5 },
-  'thin_blood': { paths: 2, attrs: '6/4/3', disc: '1+1', powers: 2, merits: 2, traits: '-', skills: 8, resources: 1, maxDisc: 5, maxAttr: 5 },
+  'vampire_neonate': { paths: 2, attrs: '7/5/3', disc: '3+1', powers: 4, merits: 1, traits: 2, skills: '8 + 5 + 5 = 18', resources: '3 + 3 + 3 = 9', maxDisc: 5, maxAttr: 5 },
+  'ancilla':         { paths: 2, attrs: '7/5/3', disc: '3+1', powers: 4, merits: 1, traits: 2, skills: '8 + 5 + 5 = 18', resources: '3 + 3 + 3 = 9', maxDisc: 6, maxAttr: 6 },
+  'elder':           { paths: 2, attrs: '7/5/3', disc: '3+1', powers: 4, merits: 1, traits: 2, skills: '8 + 5 + 5 = 18', resources: '3 + 3 + 3 = 9', maxDisc: 8, maxAttr: 8 },
+  'duskborn':        { paths: 2, attrs: '7/5/3', disc: '3+1', powers: 4, merits: 1, traits: 2, skills: '8 + 5 + 5 = 18', resources: '3 + 3 + 3 = 9', maxDisc: 5, maxAttr: 5 },
 };
 
 export function normalizeId(value: string): string {

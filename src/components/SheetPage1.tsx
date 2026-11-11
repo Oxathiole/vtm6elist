@@ -141,7 +141,7 @@ export const SheetPage1 = ({ showTips }: { showTips?: boolean }) => {
   const unlockSkills = useUIStore(s => s.unlockSkills);
   const setUnlockSkills = useUIStore(s => s.setUnlockSkills);
 
-  const attrCap = getAttributeCap(character.meta.generation, unlockAttributes);
+  const attrCap = getAttributeCap(character.meta.type, unlockAttributes);
   const skillCap = getSkillCap(character.meta.type, unlockSkills);
 
   const [isCustomClan, setIsCustomClan] = useState(
@@ -256,6 +256,7 @@ export const SheetPage1 = ({ showTips }: { showTips?: boolean }) => {
           {unlockAttributes ? <Unlock size={14} /> : <Lock size={14} />}
         </button>
 
+        {/* Шапка групп */}
         <div style={{ background: 'var(--headerBg)', color: 'var(--header-text, var(--text))', display: 'flex', fontWeight: 'bold', fontSize: '11px', letterSpacing: '0.1em', fontFamily: "'Georgia', serif" }}>
           {ATTR_GROUPS.map((g, gi) => (
             <div
@@ -447,6 +448,7 @@ export const SheetPage1 = ({ showTips }: { showTips?: boolean }) => {
                   <input
                     key={idx}
                     type="text"
+                    disabled={(character.skills[skill.id]?.dots || 0) < 3}
                     value={character.skills[skill.id]?.specifications?.[idx] || ''}
                     onChange={(e) => updateSpecification(skill.id, idx as 0 | 1 | 2, e.target.value)}
                     placeholder="—"
@@ -459,7 +461,7 @@ export const SheetPage1 = ({ showTips }: { showTips?: boolean }) => {
                       outline: 'none',
                       padding: '3px 6px',
                       fontSize: '10px',
-                      color: 'var(--text)',
+                      color: (character.skills[skill.id]?.dots || 0) < 3 ? 'var(--muted)' : 'var(--text)',
                       fontFamily: "'Georgia', serif",
                       transition: 'border-color 0.2s'
                     }}

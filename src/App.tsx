@@ -293,27 +293,121 @@ function App() {
             <button onClick={() => setShowSummary(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)' }}><X size={16} /></button>
           </div>
 
-          <div style={{ display: 'grid', gap: '6px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span>{t('summary_panel.lifepaths')}:</span> <b>{rules.paths}</b></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span>{t('summary_panel.attributes')}:</span> <b>{rules.attrs}</b></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span>{t('summary_panel.disciplines')}:</span> <b>{rules.disc}</b></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span>{t('summary_panel.powers')}:</span> <b>{rules.powers}</b></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span>{t('summary_panel.merits')}:</span> <b>{rules.merits}</b></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span>{t('summary_panel.traits')}:</span> <b>{rules.traits}</b></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span>{t('summary_panel.skills')}:</span> <b>{rules.skills}</b></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span>{t('summary_panel.resources')}:</span> <b>{rules.resources}</b></div>
-          </div>
+          {/* Трекеры: нужно : факт */}
+          <div style={{ marginTop: '12px', borderTop: '1px solid var(--border)', paddingTop: '8px' }}>
+            <div style={{ fontSize: '11px', fontWeight: 'bold', color: 'var(--accent)', marginBottom: '6px' }}>
+              {t('summary_panel.trackers')}
+            </div>
 
-          <div style={{ marginTop: '12px', borderTop: '1px solid var(--border)', paddingTop: '8px', color: 'var(--muted)', fontSize: '11px' }}>
-            <div style={{ marginBottom: '4px' }}>{t('summary_panel.max_skill')}: <b>3</b></div>
-            <div style={{ marginBottom: '4px' }}>{t('summary_panel.max_disc')}: <b>{rules.maxDisc}</b></div>
-            <div style={{ marginBottom: '4px' }}>{t('summary_panel.max_attr')}: <b>{rules.maxAttr}</b></div>
-            <div style={{ marginBottom: '4px' }}>{t('summary_panel.specs')}:</div>
-          </div>
+            {/* Жизненные пути */}
+            {(() => {
+              const filled = (character.lifePaths || []).filter(p => p && p.trim()).length;
+              const need = rules.paths;
+              return (
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
+                  <span>{t('summary_panel.lifepaths')}:</span>
+                  <b style={{ color: filled === need ? 'var(--accent)' : filled > need ? '#e74c3c' : 'var(--text)' }}>{need} : {filled}</b>
+                </div>
+              );
+            })()}
 
-          <div style={{ marginTop: '12px', borderTop: '1px solid var(--border)', paddingTop: '8px', color: 'var(--muted)', fontSize: '11px' }}>
-            <div style={{ marginBottom: '4px' }}>{t('summary_panel.max_vitae')}</div>
-            <div>{t('summary_panel.max_will')}</div>
+            {/* Характеристики (7/5/3) */}
+            {(() => {
+              const calcExtras = (cat: any) => Object.values(cat).reduce((a: number, b: any) => a + b, 0) - 3;
+              const p = Math.max(0, calcExtras(character.attributes.physical));
+              const s = Math.max(0, calcExtras(character.attributes.social));
+              const m = Math.max(0, calcExtras(character.attributes.mental));
+              
+              const totalSpent = p + s + m;
+              const need = 15;
+              
+              // Проверяем, влезают ли точки в лимиты 7/5/3
+              const sorted = [p, s, m].sort((a, b) => b - a);
+              const isOverLimit = sorted[0] > 7 || sorted[1] > 5 || sorted[2] > 3;
+              const isValid = totalSpent === need && !isOverLimit;
+
+              return (
+                <div style={{ marginBottom: '8px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '2px' }}>
+                    <span>{t('summary_panel.attributes')}:</span>
+                    <b style={{ color: isValid ? 'var(--accent)' : (totalSpent > need || isOverLimit) ? '#e74c3c' : 'var(--text)' }}>
+                      {need} : {totalSpent}
+                    </b>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', fontSize: '10px', color: 'var(--muted)', paddingLeft: '10px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span>{t('attributes_groups.physical')}:</span>
+                      <span style={{ color: p > 7 ? '#e74c3c' : 'var(--text)' }}>{p}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span>{t('attributes_groups.social')}:</span>
+                      <span style={{ color: s > 7 ? '#e74c3c' : 'var(--text)' }}>{s}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span>{t('attributes_groups.mental')}:</span>
+                      <span style={{ color: m > 7 ? '#e74c3c' : 'var(--text)' }}>{m}</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Навыки */}
+            {(() => {
+              const spent = Object.values(character.skills).reduce((s, sk) => s + (sk?.dots || 0), 0);
+              const need = 18;
+              return (
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
+                  <span>{t('summary_panel.skills')}:</span>
+                  <b style={{ color: spent === need ? 'var(--accent)' : spent > need ? '#e74c3c' : 'var(--text)' }}>{need} : {spent}</b>
+                </div>
+              );
+            })()}
+
+            {/* Ресурсы */}
+            {(() => {
+              const spent = character.resources.reduce((s, r) => s + (r?.dots || 0), 0);
+              const need = 9;
+              return (
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
+                  <span>{t('summary_panel.resources')}:</span>
+                  <b style={{ color: spent === need ? 'var(--accent)' : spent > need ? '#e74c3c' : 'var(--text)' }}>{need} : {spent}</b>
+                </div>
+              );
+            })()}
+
+            {/* Дисциплины */}
+            {(() => {
+              const spent = character.disciplines.reduce((s, d) => s + (d?.dots || 0), 0);
+              const need = 4;
+              return (
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
+                  <span>{t('summary_panel.disciplines')}:</span>
+                  <b style={{ color: spent === need ? 'var(--accent)' : spent > need ? '#e74c3c' : 'var(--text)' }}>{need} : {spent}</b>
+                </div>
+              );
+            })()}
+
+            {/* Силы Дисциплин */}
+            {(() => {
+              const spent = character.disciplines.reduce((s, d) => s + (d.powersList?.filter(Boolean).length || 0), 0);
+              const need = 4;
+              return (
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
+                  <span>{t('summary_panel.powers')}:</span>
+                  <b style={{ color: spent === need ? 'var(--accent)' : spent > need ? '#e74c3c' : 'var(--text)' }}>{need} : {spent}</b>
+                </div>
+              );
+            })()}
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '2px' }}>
+              <span>{t('summary_panel.merits')}:</span>
+              <b>1 : —</b>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
+              <span>{t('summary_panel.traits')}:</span>
+              <b>2 : —</b>
+            </div>
           </div>
         </div>
       )}

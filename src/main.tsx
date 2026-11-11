@@ -20,7 +20,7 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ErrorBoundary>
-      <BrowserRouter basename="/vtm6elist/">
+      <BrowserRouter basename="/">
         <App />
       </BrowserRouter>
     </ErrorBoundary>

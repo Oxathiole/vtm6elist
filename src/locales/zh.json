@@ -336,7 +336,11 @@
   },
   "summary_panel": {
     "title": "创建：{{type}}",
+    "trackers": "追踪器：需要 : 实际",
     "lifepaths": "人生轨迹",
+    "attr_physical": "体能",
+    "attr_social": "社会",
+    "attr_mental": "心智",
     "attributes": "属性",
     "disciplines": "律能",
     "powers": "律能力量",

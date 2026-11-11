@@ -1,4 +1,4 @@
-const CACHE = 'vtm6e-v4';
+const CACHE = 'vtm6e-v5';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', (e) => {
@@ -23,7 +23,7 @@ self.addEventListener('fetch', (e) => {
           caches.open(CACHE).then(c => c.put(e.request, clone));
         }
         return res;
-      }).catch(() => cached)
-    )
+      }).catch(() => cached || new Response('Not Found', { status: 404 }))
+    ).catch(() => new Response('Service Worker Error', { status: 503 }))
   );
 });

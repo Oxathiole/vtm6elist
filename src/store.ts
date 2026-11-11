@@ -1,10 +1,10 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { CharacterSheet, SKILLS_LIST, CLAN_DATA, VAMPIRE_TYPES, NOSTALGIA_DECADES, GENERATION_TO_MODIFIER, VAMPIRE_TYPE_TO_GENERATION, SIRE_TYPE_TO_DISCIPLINE, SIRE_TYPE_TO_DISCIPLINES, NATURE_TO_FLASH, MORTAL_LIFE_PATHS, VAMPIRE_LIFE_PATHS, normalizeId, DisciplineCard, PowerPage, HistoryItem } from './types';
+import { CharacterSheet, SKILLS_LIST, CLAN_DATA, VAMPIRE_TYPES, NOSTALGIA_DECADES, GENERATION_TO_MODIFIER, VAMPIRE_TYPE_TO_GENERATION, SIRE_TYPE_TO_DISCIPLINE, SIRE_TYPE_TO_DISCIPLINES, NATURE_TO_FLASH, MORTAL_LIFE_PATHS, VAMPIRE_LIFE_PATHS, normalizeId, DisciplineCard, PowerPage, HistoryItem, AttributePriorityMap, AttributePriority } from './types';
 import { t } from './i18n';
 import { debouncedStorage } from './utils/debouncedStorage';
 import { useUIStore } from './uiStore';
-import { getAttributeCap, getSkillCap } from './utils/limits';
+import { getAttributeCap, getSkillCap, getDisciplineCap } from './utils/limits';
 import { normalizeHistory } from './utils/migrate';
 import { deleteCharacter, endDelete } from './lib/sync';
 
@@ -18,10 +18,10 @@ const generateId = () => {
 const initialSkills: Record<string, { dots: number; specifications: [string, string, string] }> =
   SKILLS_LIST.reduce((acc, skill) => ({ ...acc, [skill.id]: { dots: 0, specifications: ['', '', ''] } }), {});
 
-const normalizeDiscipline = (d: any) => ({
+const normalizeDiscipline = (d: any, type: string) => ({
   id: d?.id || generateId(),
   name: normalizeId(d?.name || ''),
-  dots: Math.max(0, Math.min(d?.dots || 0, 5)),
+  dots: Math.max(0, Math.min(d?.dots || 0, getDisciplineCap(type, false))),
   powersList: Array.from({ length: 5 }, (_, i) => {
     if (Array.isArray(d?.powersList)) return d.powersList[i] || '';
     if (typeof d?.powers === 'string') return d.powers.split('\n')[i] || '';
@@ -33,7 +33,8 @@ export const createEmptyCharacter = (): CharacterSheet => ({
   id: generateId(),
   meta: {
     name: '', visibleAge: '', trueAge: '', embraceDate: '', nostalgia: '1980s', type: 'vampire_neonate',
-    clan: '', clanBane: '', generation: '13', modifier: '1', archetype: '', sire: '', sireType: '', sireDiscipline: ''
+    clan: '', clanBane: '', generation: '13', modifier: '1', archetype: '', sire: '', sireType: '', sireDiscipline: '',
+    attributePriority: { physical: 7, social: 5, mental: 3 },
   },
   attributes: {
     physical: { strength: 1, dexterity: 1, stamina: 1 },
@@ -142,7 +143,7 @@ const normalizeCharacter = (c: CharacterSheet): CharacterSheet => {
       natureCounter: clamp((c.humanity as any)?.natureCounter, 0, 5),
     },
     disciplines: Array.isArray(c.disciplines)
-      ? c.disciplines.map(normalizeDiscipline)
+      ? c.disciplines.map(d => normalizeDiscipline(d, normalizeId(c.meta?.type || '')))
       : [],
     skills: Object.fromEntries(
       SKILLS_LIST.map(skill => {
@@ -176,11 +177,21 @@ const normalizeCharacter = (c: CharacterSheet): CharacterSheet => {
     },
     meta: c.meta ? {
       ...c.meta,
-      type: normalizeId(c.meta.type || ''),
+      type: (() => {
+        const t = normalizeId(c.meta.type || '');
+        return t === 'thin_blood' ? 'duskborn' : t;
+      })(),
       clan: normalizeId(c.meta.clan || ''),
       sireType: normalizeId(c.meta.sireType || ''),
       nostalgia: normalizeId(c.meta.nostalgia || ''),
       clanBane: wasI18nKey(c.meta.clanBane) ? t(c.meta.clanBane) : c.meta.clanBane,
+      attributePriority: c.meta.attributePriority
+        ? {
+            physical: clamp(c.meta.attributePriority.physical, 0, 10) as AttributePriority,
+            social: clamp(c.meta.attributePriority.social, 0, 10) as AttributePriority,
+            mental: clamp(c.meta.attributePriority.mental, 0, 10) as AttributePriority,
+          }
+        : { physical: 7, social: 5, mental: 3 },
     } : c.meta,
     beast: {
       clanBeast: c.beast?.clanBeast ? (wasI18nKey(c.beast.clanBeast) ? t(c.beast.clanBeast) : c.beast.clanBeast) : '',
@@ -230,6 +241,21 @@ const normalizeCharacter = (c: CharacterSheet): CharacterSheet => {
       return { max, current: clamp(c.willpower?.current, 0, max) };
     })()
   };
+
+  // Валидируем приоритет 7/5/3
+  const rawPrio = (c.meta as any)?.attributePriority;
+  const isValidPrio = (v: any): v is 7 | 5 | 3 => v === 7 || v === 5 || v === 3;
+  const valid = rawPrio
+    && isValidPrio(rawPrio.physical)
+    && isValidPrio(rawPrio.social)
+    && isValidPrio(rawPrio.mental)
+    && rawPrio.physical + rawPrio.social + rawPrio.mental === 15
+    && new Set([rawPrio.physical, rawPrio.social, rawPrio.mental]).size === 3;
+
+  normalized.meta.attributePriority = valid
+    ? rawPrio
+    : { physical: 7, social: 5, mental: 3 };
+
   return normalized;
 };
 
@@ -394,7 +420,7 @@ export const useCharacterStore = create<CharacterStore>()(
           newChar = { ...newChar, meta: newMeta };
 
           const unlock = useUIStore.getState().unlockAttributes;
-          const cap = getAttributeCap(value, unlock);
+          const cap = getAttributeCap(newChar.meta.type, unlock);
           const A = newChar.attributes;
           const phys = {
             strength: Math.min(A.physical.strength, cap),
@@ -468,7 +494,7 @@ export const useCharacterStore = create<CharacterStore>()(
 
       updateAttribute: (category, attr, value) => set(state => updateActive(state, c => {
         const unlock = useUIStore.getState().unlockAttributes;
-        const cap = getAttributeCap(c.meta.generation, unlock);
+        const cap = getAttributeCap(c.meta.type, unlock);
         const clampedValue = Math.max(1, Math.min(value, cap)); // минимум 1
         const newAttrs = {
           ...c.attributes,
@@ -486,7 +512,7 @@ export const useCharacterStore = create<CharacterStore>()(
           willpower: deriveWillpower(composure, resolve, c.willpower.current),
         };
       })),
-
+      
       updateSkill: (skill, dots) => set(state => updateActive(state, c => {
         const unlock = useUIStore.getState().unlockSkills;
         const cap = getSkillCap(c.meta.type, unlock);
@@ -561,7 +587,9 @@ export const useCharacterStore = create<CharacterStore>()(
 
       updateDiscipline: (index, field, value) => set(state => updateActive(state, c => {
         const d = [...c.disciplines];
-        d[index] = { ...d[index], [field]: value };
+        const cap = getDisciplineCap(c.meta.type, useUIStore.getState().unlockAttributes);
+        const clamped = field === 'dots' ? Math.max(0, Math.min(Number(value) || 0, cap)) : value;
+        d[index] = { ...d[index], [field]: clamped };
         return { ...c, disciplines: d };
       })),
 
@@ -588,6 +616,7 @@ export const useCharacterStore = create<CharacterStore>()(
         const oldPath = oldApplied[index];
 
         let newSkills = { ...c.skills };
+        const skillCap = getSkillCap(c.meta.type, useUIStore.getState().unlockSkills);
 
         // Снять бонусы старого пути
         if (oldPath && oldPath !== normalizedNew) {
@@ -604,7 +633,7 @@ export const useCharacterStore = create<CharacterStore>()(
           const pathSkills = MORTAL_LIFE_PATHS[normalizedNew] || VAMPIRE_LIFE_PATHS[normalizedNew] || [];
           pathSkills.forEach(skillName => {
             if (newSkills[skillName]) {
-              newSkills[skillName] = { ...newSkills[skillName], dots: Math.min(5, newSkills[skillName].dots + 1) };
+              newSkills[skillName] = { ...newSkills[skillName], dots: Math.min(skillCap, newSkills[skillName].dots + 1) };
             }
           });
           oldApplied[index] = normalizedNew;
@@ -620,6 +649,7 @@ export const useCharacterStore = create<CharacterStore>()(
       })),
 
       applyLifePath: (index, pathName) => set(state => updateActive(state, c => {
+        const skillCap = getSkillCap(c.meta.type, useUIStore.getState().unlockSkills);
         const lp = [...(c.lifePaths || [])];
         while (lp.length <= index) lp.push('');
 
@@ -646,7 +676,7 @@ export const useCharacterStore = create<CharacterStore>()(
         if (pathSkills.length > 0) {
           pathSkills.forEach(skillName => {
             if (newSkills[skillName]) {
-              newSkills[skillName] = { ...newSkills[skillName], dots: Math.min(5, newSkills[skillName].dots + 1) };
+              newSkills[skillName] = { ...newSkills[skillName], dots: Math.min(skillCap, newSkills[skillName].dots + 1) };
             }
           });
         }

@@ -1,18 +1,27 @@
-// Лимиты по правилам пользователя (house-rule, не из PDF):
-// - Поколение 8+ → максимум характеристики 5
-// - Поколение 7 → 6, 6 → 7, 5 → 8, 4 → 9, 3 → 10
-// - Неонат → максимум навыка 3, остальные виды — 5
-// unlock=true полностью снимает лимиты (Unlock в шапке).
+// Лимиты по сводке:
+// - Потолок Характеристик: неонат 5, анцилла 6, старейшина 8
+// - Макс. Навык при создании = 3 для ВСЕХ типов вампиров
+// - unlock=true полностью снимает лимиты (Unlock в шапке)
 
-export const getAttributeCap = (generation: string, unlock: boolean): number => {
+export const getAttributeCap = (type: string, unlock: boolean): number => {
   if (unlock) return 10;
-  const gen = parseInt(generation, 10);
-  if (isNaN(gen) || gen >= 8) return 5;
-  if (gen <= 3) return 10;
-  return 10 - (gen - 3); // gen 7→6, 6→7, 5→8, 4→9
+  switch (type) {
+    case 'elder':   return 8;
+    case 'ancilla': return 6;
+    default:        return 5; // vampire_neonate, duskborn
+  }
 };
 
-export const getSkillCap = (type: string, unlock: boolean): number => {
+export const getSkillCap = (_type: string, unlock: boolean): number => {
   if (unlock) return 5;
-  return type === 'vampire_neonate' ? 3 : 5;
+  return 3; // По шагу 4: при создании ни один Навык не может превышать 3 пункта
+};
+
+export const getDisciplineCap = (type: string, unlock: boolean): number => {
+  if (unlock) return 10;
+  switch (type) {
+    case 'elder':   return 8;
+    case 'ancilla': return 6;
+    default:       return 5;
+  }
 };
