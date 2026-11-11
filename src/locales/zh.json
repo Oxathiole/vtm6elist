@@ -2,7 +2,8 @@
   "nav": {
     "sheet": "角色列表",
     "master": "主人列表",
-    "account": "个人账户"
+    "account": "个人账户",
+    "classic": "经典角色表"
   },
   "master": {
     "title": "大师列表",

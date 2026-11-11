@@ -2,7 +2,8 @@
   "nav": {
     "sheet": "Character Sheet",
     "master": "Master Sheet",
-    "account": "Account"
+    "account": "Account",
+    "classic": "Classic Sheet"
   },
   "master": {
     "title": "Master Sheet",

@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { useCharacterStore } from '../store';
+import { ClassicSheetData } from './types';
 import {
-  ClassicSheetData,
   createDefaultClassic,
   ensureShape,
   DEFAULT_CLASSIC,
@@ -51,6 +51,9 @@ export const useClassicStore = create<ClassicStore>()(
         },
         setItem: (name, value) => {
           localStorage.setItem(name, JSON.stringify(value));
+        },
+        removeItem: (name) => {
+          localStorage.removeItem(name);
         },
       })),
       onRehydrateStorage: () => (state) => {

@@ -13,6 +13,7 @@ import { NavLink, Navigate, Routes, Route } from 'react-router-dom';
 const SheetPage = lazy(() => import('./pages/SheetPage').then(m => ({ default: m.SheetPage })));
 const MasterRoute = lazy(() => import('./pages/MasterRoute').then(m => ({ default: m.MasterRoute })));
 const AccountRoute = lazy(() => import('./pages/AccountRoute').then(m => ({ default: m.AccountRoute })));
+const ClassicSheetPage = lazy(() => import('./classic/ClassicSheetPage').then(m => ({ default: m.ClassicSheetPage })));
 
 const NavTab = ({ to, label, end }: { to: string; label: string; end?: boolean }) => (
   <NavLink
@@ -436,6 +437,7 @@ function App() {
           <div style={{ display: 'flex', gap: '6px' }}>
               <NavTab to="/sheet" end label={t('nav.sheet')} />
               <NavTab to="/master" label={t('nav.master')} />
+              <NavTab to="/classic" label={t('nav.classic')} />
               <NavTab to="/account" label={t('nav.account')} />
             </div>
         
@@ -645,6 +647,7 @@ function App() {
             <Route path="/" element={<Navigate to="/sheet" replace />} />
             <Route path="/sheet" element={<SheetPage showTips={showTips} handleExportPdf={handleExportPdf} />} />
             <Route path="/master" element={<MasterRoute />} />
+            <Route path="/classic" element={<ClassicSheetPage />} />
             <Route path="/account" element={<AccountRoute />} />
             <Route path="*" element={<Navigate to="/sheet" replace />} />
           </Routes>
