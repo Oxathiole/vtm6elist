@@ -1,0 +1,80 @@
+/* ===== КЛАССИЧЕСКИЙ ЛИСТ V20 — все стили не зависят от темы сайта ===== */
+
+.cl-page-wrapper {
+  width: 100%;
+  max-width: 210mm;
+  margin: 0 auto;
+  overflow-x: auto;
+}
+
+.classic-page {
+  background: #f6f1de;
+  color: #141414;
+  border: 3px solid #8a6d1f;
+  outline: 1px solid #141414;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
+  width: 210mm;
+  min-height: 297mm;
+  padding: 10mm;
+  margin: 0 auto 20px;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+/* Заголовки секций */
+.cl-section-title { display: flex; align-items: center; gap: 6px; margin: 8px 0 6px; }
+.cl-section-title .cl-line { flex: 1; height: 1px; background: #141414; }
+
+/* Общие инпуты внутри листа */
+.cl-input, .cl-select, .cl-textarea {
+  background: #fbf7e8;
+  border: none;
+  border-bottom: 1px solid #6b6350;
+  outline: none;
+  color: #141414;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 11px;
+  box-sizing: border-box;
+}
+.cl-input:focus, .cl-select:focus, .cl-textarea:focus {
+  border-bottom-color: #8a6d1f;
+}
+.cl-select { appearance: auto; cursor: pointer; }
+.cl-select option { color: #141414; background-color: #fbf7e8; }
+
+/* Таблицы */
+.cl-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+.cl-table th, .cl-table td { border: 1px solid #6b6350; padding: 2px 3px; text-align: left; }
+.cl-table th { background: #efe6c8; font-weight: bold; letter-spacing: 0.04em; text-transform: uppercase; font-size: 9px; }
+.cl-table .cl-input, .cl-table .cl-select {
+  border: none; background: transparent; width: 100%; padding: 1px 2px;
+}
+
+/* Тулбар */
+.cl-toolbar {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  background: #e9e0c4; border: 1px solid #8a6d1f; border-radius: 4px;
+  padding: 6px 10px; margin-bottom: 10px; font-family: Georgia, 'Times New Roman', serif;
+}
+.cl-toolbar .cl-toolbar-name { font-size: 13px; font-weight: bold; color: #141414; letter-spacing: 0.04em; }
+.cl-toolbar button {
+  background: #e9e0c4; border: 1px solid #8a6d1f; color: #141414;
+  font-family: Georgia, 'Times New Roman', serif; font-size: 12px;
+  padding: 4px 10px; cursor: pointer; border-radius: 3px;
+}
+.cl-toolbar button:hover { background: #f1e8c9; }
+
+/* Печать */
+@media print {
+  .no-print { display: none !important; }
+  .cl-page-wrapper { margin: 0 !important; max-width: none !important; overflow: visible !important; }
+  .classic-page {
+    margin: 0 !important; box-shadow: none !important;
+    min-height: 297mm !important; height: 297mm !important;
+    page-break-after: always !important;
+  }
+  .classic-page:last-of-type { page-break-after: auto !important; }
+  .classic-page input, .classic-page select, .classic-page textarea {
+    font-size: 10px !important; padding: 1px 2px !important;
+  }
+}
