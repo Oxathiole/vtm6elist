@@ -71,11 +71,13 @@ let fontsReadyPromise: Promise<FontFaceSet> | null = null;
 const isMobileDevice = () => /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 
 const renderPageToCanvas = async (
-  elementId: string,
+  target: string | HTMLElement,
   forceClassic: boolean,
   removeBackground: boolean
 ): Promise<HTMLCanvasElement | null> => {
-  const original = document.getElementById(elementId);
+  const original = typeof target === 'string'
+    ? document.getElementById(target)
+    : target;
   if (!original) return null;
 
   const width = 794; // Ширина A4 в пикселях (210мм при 96 DPI)
@@ -319,7 +321,9 @@ export const exportAllPDFs = async (
   fontsReadyPromise = null;
 
   try {
-    const sheetElements = Array.from(document.querySelectorAll<HTMLElement>('.sheet-page'));
+    const sheetElements = Array.from(
+      document.querySelectorAll<HTMLElement>('.sheet-page, .classic-page')
+    );
     if (sheetElements.length === 0) throw new Error('Не удалось найти страницы персонажа');
 
     const total = sheetElements.length;
@@ -330,7 +334,7 @@ export const exportAllPDFs = async (
     let pageAdded = 0;
 
     for (let i = 0; i < total; i++) {
-      const canvas = await renderPageToCanvas(sheetElements[i].id, forceClassic, removeBackground);
+      const canvas = await renderPageToCanvas(sheetElements[i], forceClassic, removeBackground);
       if (onProgress) onProgress(i + 1, total);
 
       if (!canvas) {

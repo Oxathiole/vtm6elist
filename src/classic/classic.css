@@ -2,9 +2,10 @@
 
 .cl-page-wrapper {
   width: 100%;
-  max-width: 210mm;
-  margin: 0 auto;
-  overflow-x: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
 }
 
 .classic-page {
@@ -15,82 +16,106 @@
   box-shadow: 0 6px 24px var(--glow);
   box-sizing: border-box;
   width: 210mm;
-  min-height: 297mm;
+  height: 297mm; /* Строгая высота А4 */
   padding: 8mm;
-  margin: 0 auto 20px;
+  margin: 0;
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: 12px;
+  font-size: 11px;
   display: flex;
   flex-direction: column;
+  overflow: hidden; /* Запрет на вылезание */
 }
 
 /* Заголовки секций с ромбами */
-.cl-section-title { display: flex; align-items: center; gap: 8px; margin: 10px 0 6px; }
-.cl-section-title .cl-line { flex: 1; height: 2px; background: var(--border); position: relative; }
-.cl-section-title .cl-line::before { content: ''; position: absolute; width: 6px; height: 6px; background: var(--border); transform: rotate(45deg); top: -2px; }
+.cl-section-title { display: flex; align-items: center; gap: 8px; margin: 6px 0 2px; }
+.cl-section-title .cl-line { flex: 1; height: 1px; background: var(--border); position: relative; }
+.cl-section-title .cl-line::before { content: ''; position: absolute; width: 4px; height: 4px; background: var(--border); transform: rotate(45deg); top: -1.5px; }
 .cl-section-title .cl-line:first-child::before { right: -2px; }
 .cl-section-title .cl-line:last-child::before { left: -2px; }
-.cl-section-title span { font-size: 13px; font-weight: bold; letter-spacing: 0.05em; text-transform: uppercase; }
+.cl-section-title span { font-size: 12px; font-weight: bold; letter-spacing: 0.05em; text-transform: uppercase; }
 
 /* Инпуты */
 .cl-input, .cl-select, .cl-textarea {
-  background: var(--input-bg);
+  background: transparent;
   border: none;
   border-bottom: 1px solid var(--border);
   outline: none;
   color: var(--text);
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: 12px;
+  font-size: 11px;
   box-sizing: border-box;
-  padding: 1px 4px;
-  height: 22px;
+  padding: 0 4px;
+  height: 18px;
 }
 .cl-input:focus { border-bottom-color: var(--accent); }
+.cl-textarea { border: 1px solid var(--border); padding: 2px 4px; }
 
 /* Сетки */
-.cl-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-.cl-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 28px; margin-bottom: 8px; }
-.cl-meta-row { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; height: 22px; }
-.cl-meta-label { flex: 0 0 85px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
+.cl-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.cl-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; margin-bottom: 4px; }
+.cl-meta-row { display: flex; align-items: center; gap: 4px; margin-bottom: 2px; height: 18px; }
+.cl-meta-label { flex: 0 0 75px; font-size: 9px; font-weight: bold; text-transform: uppercase; }
 .cl-meta-row .cl-input { flex: 1; }
 
-/* Строки */
-.cl-named-row { display: flex; align-items: center; gap: 4px; height: 22px; margin-bottom: 2px; }
-.cl-named-row .cl-input { flex: 1; min-width: 0; }
-.cl-dot-group { display: flex; gap: 2px; flex-shrink: 0; }
+/* Строки способностей */
+.cl-named-row { display: flex; align-items: center; gap: 2px; height: 16px; margin-bottom: 1px; }
+.cl-named-row .cl-input { flex: 1; min-width: 0; height: 16px; font-size: 10px; }
+.cl-dot-group { display: flex; gap: 1px; flex-shrink: 0; }
+
+/* Кастомный инпут */
+.cl-custom-input {
+  border-bottom: 1px dashed var(--border) !important;
+  color: var(--text);
+  background: transparent;
+  font-size: 9px;
+  height: 16px;
+}
 
 /* Точки */
-.cl-dot { width: 14px; height: 14px; border: 1px solid var(--border); background: transparent; cursor: pointer; box-sizing: border-box; padding: 0; }
+.cl-dot { width: 12px; height: 12px; border: 1px solid var(--border); background: transparent; cursor: pointer; box-sizing: border-box; padding: 0; }
 .cl-dot.circle { border-radius: 50%; }
 .cl-dot.square { border-radius: 0; }
 .cl-dot.filled { background: var(--dot-color); border-color: var(--dot-color); }
 
-/* Таблица специализаций */
-.cl-spec-table { width: 100%; border-collapse: collapse; font-size: 11px; }
-.cl-spec-table th, .cl-spec-table td { border: 1px solid var(--border); padding: 1px 4px; text-align: left; }
-.cl-spec-table th { background: var(--input-bg); font-weight: bold; font-size: 10px; text-transform: uppercase; }
-.cl-spec-table .cl-input { border: none; background: transparent; width: 100%; }
+/* Таблицы */
+.cl-spec-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+.cl-spec-table th, .cl-spec-table td { border: 1px solid var(--border); padding: 0 2px; text-align: left; height: 16px; }
+.cl-spec-table th { background: var(--input-bg); font-weight: bold; font-size: 9px; text-transform: uppercase; }
+.cl-spec-table .cl-input { border: none; background: transparent; width: 100%; height: 14px; font-size: 10px; }
 
 /* Здоровье */
-.cl-health-row { display: flex; align-items: center; justify-content: space-between; height: 20px; margin-bottom: 2px; }
-.cl-health-label { flex: 1; font-size: 11px; text-transform: uppercase; }
-.cl-health-pen { width: 20px; text-align: right; font-size: 11px; margin-right: 8px; }
+.cl-health-row { display: flex; align-items: center; justify-content: space-between; height: 14px; margin-bottom: 1px; }
+.cl-health-label { flex: 1; font-size: 10px; text-transform: uppercase; }
+.cl-health-pen { width: 15px; text-align: right; font-size: 10px; margin-right: 4px; }
 
 /* Сетка квадратов (Кровь) */
-.cl-blood-grid { display: grid; grid-template-columns: repeat(10, 14px); gap: 2px; justify-content: center; margin-bottom: 4px; }
-.cl-blood-box { width: 14px; height: 14px; border: 1px solid var(--border); background: transparent; cursor: pointer; padding: 0; }
-.cl-blood-box.filled { background: var(--dot-color); border-color: var(--dot-color); }
-.cl-blood-box.disabled { opacity: 0.3; cursor: not-allowed; }
+.cl-blood-grid { display: grid; grid-template-columns: repeat(10, 12px); gap: 2px; justify-content: center; margin-bottom: 2px; }
+.cl-blood-box { 
+  width: 12px; height: 12px; 
+  border: 1px solid var(--border); 
+  background: #cccccc; /* Серый для доступных, но пустых */
+  cursor: pointer; padding: 0; 
+  opacity: 0.7;
+}
+.cl-blood-box.filled { 
+  background: #000000; /* Черный для заполненных */
+  border-color: #000000; 
+  opacity: 1;
+}
 
 /* Печать */
 @media print {
   .no-print { display: none !important; }
-  .cl-page-wrapper { margin: 0 !important; max-width: none !important; overflow: visible !important; }
-  .classic-page { margin: 0 !important; box-shadow: none !important; min-height: 297mm !important; height: 297mm !important; page-break-after: always !important; }
+  .cl-page-wrapper { gap: 0 !important; }
+  .classic-page { 
+    margin: 0 !important; box-shadow: none !important; border: none !important;
+    page-break-after: always !important; 
+    height: 297mm !important;
+  }
   .classic-page:last-of-type { page-break-after: auto !important; }
-  .classic-page input, .classic-page select, .classic-page textarea { font-size: 10px !important; padding: 1px 2px !important; }
+  .cl-input, .cl-select, .cl-textarea { font-size: 10px !important; }
   .cl-dot { border-color: #000 !important; }
   .cl-dot.filled { background: #000 !important; border-color: #000 !important; }
-  .cl-blood-box { border-color: #000 !important; }
-  .cl-blood-box.filled { background: #000 !important; border-color: #000 !important; }
+  .cl-blood-box { border-color: #000 !important; background: #fff !important; opacity: 1 !important; }
+  .cl-blood-box.filled { background: #000 !important; }
 }

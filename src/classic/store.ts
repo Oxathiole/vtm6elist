@@ -113,7 +113,15 @@ export const useClassicStore = create<ClassicState>()(
       }),
 
       updateAbility: (cat, name, value) => set({
-        character: { ...get().character, abilities: { ...get().character.abilities, [cat]: { ...get().character.abilities[cat], [name]: value } } },
+        character: {
+          ...get().character,
+          abilities: {
+            ...get().character.abilities,
+            [cat]: value === -1
+              ? Object.fromEntries(Object.entries(get().character.abilities[cat]).filter(([k]) => k !== name))
+              : { ...get().character.abilities[cat], [name]: value },
+          },
+        },
       }),
 
       addDiscipline: () => set({ character: { ...get().character, disciplines: [...get().character.disciplines, { name: '', value: 0 }] } }),

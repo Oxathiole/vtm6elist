@@ -23,7 +23,7 @@ export const SheetPage = ({ showTips, handleExportPdf }: SheetPageProps) => {
   const { t } = useTranslation();
 
   const [edition, setEdition] = useState<'6e' | '20th'>(() =>
-    (safeStorage.get('vtm-sheet-edition') as '6e' | '20th') || '6e'
+    (safeStorage.get('vtm-sheet-edition') as '6e' | '20th') || '20th'
   );
 
   useEffect(() => { safeStorage.set('vtm-sheet-edition', edition); }, [edition]);
