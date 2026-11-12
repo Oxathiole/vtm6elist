@@ -5,10 +5,8 @@ import App from './App.tsx';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import './index.css';
 import './i18n';
-import { initSync } from './lib/sync';
 
-// Каркас синка с Supabase: пока stub, ничего не делает.
-initSync();
+// Supabase sync отключён — синхронизация идёт через /api (better-sqlite3 на VDS)
 
 // Регистрируем SW ТОЛЬКО при сборке (npm run build), чтобы не ломать HMR
 if ('serviceWorker' in navigator && import.meta.env.PROD) {

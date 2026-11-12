@@ -118,7 +118,27 @@
     "merge_cloud": "In cloud: {cloud} characters",
     "merge_local": "Locally: {local} characters",
     "merge_merge": "Merge",
-    "merge_overwrite": "Overwrite local with cloud"
+    "merge_overwrite": "Overwrite local with cloud",
+    "my_characters": "My Characters",
+    "knowledge_base": "Knowledge Base",
+    "interactive_sheet": "Interactive Sheet",
+    "classic_sheet": "Classic Sheet",
+    "no_characters": "No characters yet. Create your first!"
+  },
+  "auth": {
+    "account_need_login": "You need an account to access your personal cabinet.",
+    "login": "Login",
+    "register": "Register",
+    "username": "Username",
+    "password": "Password",
+    "invite_code": "Invite code",
+    "loading": "Processing...",
+    "login_btn": "Sign in",
+    "register_btn": "Register",
+    "no_account": "No account? Register",
+    "has_account": "Have an account? Sign in",
+    "logout": "Sign out",
+    "logout_confirm": "Sign out of account?"
   },
   "ui": {
     "name": "Name",

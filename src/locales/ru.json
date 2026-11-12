@@ -118,7 +118,27 @@
     "merge_cloud": "В облаке: {cloud} персонажей",
     "merge_local": "Локально: {local} персонажей",
     "merge_merge": "Объединить",
-    "merge_overwrite": "Заменить локальные облаком"
+    "merge_overwrite": "Заменить локальные облаком",
+    "my_characters": "Мои персонажи",
+    "knowledge_base": "База знаний",
+    "interactive_sheet": "Интерактивный лист",
+    "classic_sheet": "Классический лист",
+    "no_characters": "Нет персонажей. Создайте первого!"
+  },
+  "auth": {
+    "account_need_login": "Для доступа к личному кабинету нужен аккаунт.",
+    "login": "Вход",
+    "register": "Регистрация",
+    "username": "Логин",
+    "password": "Пароль",
+    "invite_code": "Код приглашения",
+    "loading": "Обработка...",
+    "login_btn": "Войти",
+    "register_btn": "Зарегистрироваться",
+    "no_account": "Нет аккаунта? Зарегистрируйся",
+    "has_account": "Есть аккаунт? Войдите",
+    "logout": "Выйти",
+    "logout_confirm": "Выйти из аккаунта?"
   },
   "ui": {
     "name": "Имя",

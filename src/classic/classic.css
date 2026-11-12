@@ -17,22 +17,22 @@
   box-sizing: border-box;
   width: 210mm;
   height: 297mm; /* Строгая высота А4 */
-  padding: 8mm;
+  padding: 5mm 6mm; /* Уменьшили отступы, чтобы вместить крупный шрифт */
   margin: 0;
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: 11px;
+  font-size: 13px; /* Увеличен базовый шрифт */
   display: flex;
   flex-direction: column;
   overflow: hidden; /* Запрет на вылезание */
 }
 
 /* Заголовки секций с ромбами */
-.cl-section-title { display: flex; align-items: center; gap: 8px; margin: 6px 0 2px; }
+.cl-section-title { display: flex; align-items: center; gap: 8px; margin: 4px 0 2px; }
 .cl-section-title .cl-line { flex: 1; height: 1px; background: var(--border); position: relative; }
 .cl-section-title .cl-line::before { content: ''; position: absolute; width: 4px; height: 4px; background: var(--border); transform: rotate(45deg); top: -1.5px; }
 .cl-section-title .cl-line:first-child::before { right: -2px; }
 .cl-section-title .cl-line:last-child::before { left: -2px; }
-.cl-section-title span { font-size: 12px; font-weight: bold; letter-spacing: 0.05em; text-transform: uppercase; }
+.cl-section-title span { font-size: 14px; font-weight: bold; letter-spacing: 0.05em; text-transform: uppercase; }
 
 /* Инпуты */
 .cl-input, .cl-select, .cl-textarea {
@@ -42,24 +42,24 @@
   outline: none;
   color: var(--text);
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: 11px;
+  font-size: 12px; /* Увеличен шрифт ввода */
   box-sizing: border-box;
   padding: 0 4px;
-  height: 18px;
+  height: 20px;
 }
 .cl-input:focus { border-bottom-color: var(--accent); }
-.cl-textarea { border: 1px solid var(--border); padding: 2px 4px; }
+.cl-textarea { border: 1px solid var(--border); padding: 2px 4px; font-size: 12px; }
 
 /* Сетки */
-.cl-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-.cl-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; margin-bottom: 4px; }
-.cl-meta-row { display: flex; align-items: center; gap: 4px; margin-bottom: 2px; height: 18px; }
-.cl-meta-label { flex: 0 0 75px; font-size: 9px; font-weight: bold; text-transform: uppercase; }
+.cl-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.cl-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; margin-bottom: 2px; }
+.cl-meta-row { display: flex; align-items: center; gap: 4px; margin-bottom: 1px; height: 20px; }
+.cl-meta-label { flex: 0 0 80px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
 .cl-meta-row .cl-input { flex: 1; }
 
 /* Строки способностей */
-.cl-named-row { display: flex; align-items: center; gap: 2px; height: 16px; margin-bottom: 1px; }
-.cl-named-row .cl-input { flex: 1; min-width: 0; height: 16px; font-size: 10px; }
+.cl-named-row { display: flex; align-items: center; gap: 4px; height: 20px; margin-bottom: 1px; }
+.cl-named-row .cl-input { flex: 1; min-width: 0; height: 18px; font-size: 12px; }
 .cl-dot-group { display: flex; gap: 1px; flex-shrink: 0; }
 
 /* Кастомный инпут */
@@ -67,31 +67,31 @@
   border-bottom: 1px dashed var(--border) !important;
   color: var(--text);
   background: transparent;
-  font-size: 9px;
-  height: 16px;
+  font-size: 11px;
+  height: 18px;
 }
 
 /* Точки */
-.cl-dot { width: 12px; height: 12px; border: 1px solid var(--border); background: transparent; cursor: pointer; box-sizing: border-box; padding: 0; }
+.cl-dot { width: 14px; height: 14px; border: 1px solid var(--border); background: transparent; cursor: pointer; box-sizing: border-box; padding: 0; }
 .cl-dot.circle { border-radius: 50%; }
 .cl-dot.square { border-radius: 0; }
 .cl-dot.filled { background: var(--dot-color); border-color: var(--dot-color); }
 
 /* Таблицы */
-.cl-spec-table { width: 100%; border-collapse: collapse; font-size: 10px; }
-.cl-spec-table th, .cl-spec-table td { border: 1px solid var(--border); padding: 0 2px; text-align: left; height: 16px; }
-.cl-spec-table th { background: var(--input-bg); font-weight: bold; font-size: 9px; text-transform: uppercase; }
-.cl-spec-table .cl-input { border: none; background: transparent; width: 100%; height: 14px; font-size: 10px; }
+.cl-spec-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.cl-spec-table th, .cl-spec-table td { border: 1px solid var(--border); padding: 0 2px; text-align: left; height: 20px; }
+.cl-spec-table th { background: var(--input-bg); font-weight: bold; font-size: 10px; text-transform: uppercase; }
+.cl-spec-table .cl-input { border: none; background: transparent; width: 100%; height: 16px; font-size: 11px; }
 
 /* Здоровье */
-.cl-health-row { display: flex; align-items: center; justify-content: space-between; height: 14px; margin-bottom: 1px; }
-.cl-health-label { flex: 1; font-size: 10px; text-transform: uppercase; }
-.cl-health-pen { width: 15px; text-align: right; font-size: 10px; margin-right: 4px; }
+.cl-health-row { display: flex; align-items: center; justify-content: space-between; height: 16px; margin-bottom: 1px; }
+.cl-health-label { flex: 1; font-size: 11px; text-transform: uppercase; }
+.cl-health-pen { width: 18px; text-align: right; font-size: 11px; margin-right: 4px; }
 
 /* Сетка квадратов (Кровь) */
-.cl-blood-grid { display: grid; grid-template-columns: repeat(10, 12px); gap: 2px; justify-content: center; margin-bottom: 2px; }
+.cl-blood-grid { display: grid; grid-template-columns: repeat(10, 14px); gap: 2px; justify-content: center; margin-bottom: 2px; }
 .cl-blood-box { 
-  width: 12px; height: 12px; 
+  width: 14px; height: 14px; 
   border: 1px solid var(--border); 
   background: #cccccc; /* Серый для доступных, но пустых */
   cursor: pointer; padding: 0; 
@@ -113,7 +113,7 @@
     height: 297mm !important;
   }
   .classic-page:last-of-type { page-break-after: auto !important; }
-  .cl-input, .cl-select, .cl-textarea { font-size: 10px !important; }
+  .cl-input, .cl-select, .cl-textarea { font-size: 11px !important; }
   .cl-dot { border-color: #000 !important; }
   .cl-dot.filled { background: #000 !important; border-color: #000 !important; }
   .cl-blood-box { border-color: #000 !important; background: #fff !important; opacity: 1 !important; }

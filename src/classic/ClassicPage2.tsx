@@ -51,7 +51,7 @@ export const ClassicPage2 = () => {
           ))}
           <tr className="no-print">
             <td colSpan={8} style={{ textAlign: 'center', padding: 0 }}>
-              <button onClick={addCombatRow} style={{ background: 'transparent', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '9px', width: '100%' }}>+ Добавить</button>
+              <button onClick={addCombatRow} style={{ background: 'transparent', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '11px', width: '100%' }}>+ Добавить</button>
             </td>
           </tr>
         </tbody>
@@ -61,7 +61,7 @@ export const ClassicPage2 = () => {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 16px', marginBottom: '6px' }}>
         {[['birthDate', 'ДАТА РОЖДЕНИЯ'], ['apparentAge', 'КАЖЕМЫЙ ВОЗРАСТ'], ['dateOfDeath', 'ДАТА СМЕРТИ'], ['gender', 'ПОЛ'], ['race', 'РАСА'], ['hair', 'ВОЛОСЫ'], ['eyes', 'ГЛАЗА'], ['heightWeight', 'РОСТ/ВЕС'], ['build', 'СОСТРОЙ'], ['nationality', 'НАРОДНОСТЬ']].map(([k, l]) => (
           <div key={k} className="cl-meta-row" style={{ height: '18px' }}>
-            <span className="cl-meta-label" style={{ flex: '0 0 80px', fontSize: '9px' }}>{l}</span>
+            <span className="cl-meta-label" style={{ flex: '0 0 90px', fontSize: '11px' }}>{l}</span>
             <input className="cl-input" value={(character.details as any)?.[k] || ''} onChange={e => updateDetail(k, e.target.value)} style={{ height: '18px' }} />
           </div>
         ))}
@@ -79,7 +79,7 @@ export const ClassicPage2 = () => {
       <SectionTitle>СОБСТВЕННОСТЬ И ЭКИПИРОВКА</SectionTitle>
       <textarea className="cl-textarea" value={character.property} onChange={e => updateField('property', e.target.value)} style={{ flex: 1, minHeight: '30px', resize: 'none' }} />
 
-      <div style={{ marginTop: '6px', textAlign: 'center', fontSize: '8px', color: 'var(--muted)' }}>
+      <div style={{ marginTop: '6px', textAlign: 'center', fontSize: '11px', color: 'var(--muted)' }}>
         ХАРАКТЕРИСТИКИ: 7/5/3 • СПОСОБНОСТИ: 13/9/5 • ДИСЦИПЛИНЫ: 3 • ФАКТЫ БИОГРАФИИ: 5 • ДОБРОДЕТЕЛИ: 7 • СВОБОДНЫЕ ПУНКТЫ: 15
       </div>
 

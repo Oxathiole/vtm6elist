@@ -6,11 +6,10 @@ import { VAMPIRE_TYPES, CREATION_RULES } from './types';
 import { useUIStore } from './uiStore';
 import { safeStorage } from './utils/storage';
 import { THEMES, DEFAULT_THEME_ID } from './themes';
-import { Download, Upload, FileJson, RotateCcw, Menu, X, Send, BookOpen, Globe, History as HistoryIcon, HelpCircle, Moon } from 'lucide-react';
+import { Download, Upload, FileJson, RotateCcw, Menu, X, Send, BookOpen, Globe, History as HistoryIcon, HelpCircle, Moon, Skull } from 'lucide-react';
 import { NavLink, Navigate, Routes, Route, useNavigate } from 'react-router-dom';
 import { api } from './utils/api';
 import { AuthScreen } from './components/AuthScreen';
-import { initSync } from './lib/sync';
 const SheetPage = lazy(() => import('./pages/SheetPage').then(m => ({ default: m.SheetPage })));
 const MasterRoute = lazy(() => import('./pages/MasterRoute').then(m => ({ default: m.MasterRoute })));
 const AccountRoute = lazy(() => import('./pages/AccountRoute').then(m => ({ default: m.AccountRoute })));
@@ -40,7 +39,8 @@ const NavTab = ({ to, label, end }: { to: string; label: string; end?: boolean }
 function App() {
   const navigate = useNavigate();
   const [isAuthed, setIsAuthed] = useState(!!api.getToken());
-  const [hasMasterCode, setHasMasterCode] = useState(!!safeStorage.get('vtm6e-master-code'));
+  const [showAuth, setShowAuth] = useState(false);
+  const hasMasterCode = !!safeStorage.get('vtm6e-master-code');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [themeId, setThemeId] = useState<string>(() => safeStorage.get('vtm6e-theme') || DEFAULT_THEME_ID);
   const [lang, setLang] = useState<string>(() => safeStorage.get('vtm6e-lang') || 'ru');
@@ -105,25 +105,44 @@ function App() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const prevCharRef = useRef(character);
 
-  // Загрузка персонажей с сервера при авторизации
+  // --- Auth state ---
+  const [hasLoadedFromServer, setHasLoadedFromServer] = useState(false);
+  const firstSyncDoneRef = useRef(false);
+
+  // При логине: грузим персонажей с сервера
   useEffect(() => {
-    if (!isAuthed) return;
-    api.fetchCharacters().then(chars => {
-      if (chars && chars.length > 0) {
-        useCharacterStore.getState().loadCharacters(chars);
-      }
-    }).catch(console.error);
+    if (!isAuthed) {
+      setHasLoadedFromServer(false);
+      firstSyncDoneRef.current = false;
+      return;
+    }
+    let cancelled = false;
+    api.fetchCharacters()
+      .then(chars => {
+        if (cancelled) return;
+        if (chars && chars.length > 0) {
+          useCharacterStore.getState().loadCharacters(chars);
+        }
+        setHasLoadedFromServer(true);
+      })
+      .catch(err => {
+        if (cancelled) return;
+        console.error('[sync] pull failed', err);
+        setHasLoadedFromServer(true); // не блокируем save, чтобы можно было запушить локальные
+      });
+    return () => { cancelled = true; };
   }, [isAuthed]);
 
-  // Автосохранение на сервер (debounce 3 сек)
+  // Автосохранение активного персонажа с debounce
   useEffect(() => {
-    if (!isAuthed) return;
+    if (!isAuthed || !hasLoadedFromServer) return;
     const timer = setTimeout(() => {
-      const chars = useCharacterStore.getState().characters;
-      api.saveCharacters(chars).catch(console.error);
-    }, 3000);
+      const active = useCharacterStore.getState().getActive();
+      api.saveCharacters([active]).catch(err => console.error('[sync] push failed', err));
+      firstSyncDoneRef.current = true;
+    }, 2000);
     return () => clearTimeout(timer);
-  }, [isAuthed, character]);
+  }, [isAuthed, character, hasLoadedFromServer]);
 
   // Сброс истории при смене персонажа
   useEffect(() => {
@@ -255,8 +274,22 @@ function App() {
   };
 
 
+
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--bg)', color: 'var(--text)' }}>
+      {/* МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ */}
+      {showAuth && (
+        <div
+          style={{
+            position: 'fixed', inset: 0, zIndex: 9998,
+            background: 'rgba(0,0,0,0.75)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: '20px',
+          }}
+        >
+          <AuthScreen onAuth={() => { setIsAuthed(true); setShowAuth(false); }} />
+        </div>
+      )}
 
       {/* ОВЕРЛЕЙ ЗАГРУЗКИ PDF */}
       {isExporting && (
@@ -445,7 +478,28 @@ function App() {
               <NavTab to="/master" label={t('nav.master')} />
               <NavTab to="/account" label={t('nav.account')} />
             </div>
-        
+
+            {isAuthed ? (
+              <button
+                className="icon-btn"
+                onClick={() => { if (confirm(t('auth.logout_confirm'))) api.logout(); }}
+                title={t('auth.logout')}
+                style={{ position: 'relative', color: 'var(--muted)' }}
+              >
+                <span style={{ position: 'absolute', top: '-6px', left: '50%', transform: 'translateX(-50%)', fontSize: '7px', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.1em', pointerEvents: 'none' }}>out</span>
+                <X size={16} />
+              </button>
+            ) : (
+              <button
+                className="icon-btn"
+                onClick={() => setShowAuth(true)}
+                title={t('auth.login')}
+                style={{ position: 'relative', color: 'var(--accent)', fontWeight: 'bold', fontSize: '12px' }}
+              >
+                {t('auth.login')}
+              </button>
+            )}
+
           <div style={{ height: '20px', width: '1px', background: 'var(--border)' }} />
 
           {/* Group 3: Tools */}
@@ -603,6 +657,11 @@ function App() {
               <button onClick={() => { handleExportPdf(); setMobileMenuOpen(false); }} className="flex items-center gap-2 p-2 rounded" style={{ background: 'var(--accent)', color: 'var(--bg)' }}><Download size={14} /> {t('common.pdf_export')}</button>
               <button onClick={() => { if (confirm(t('placeholders.clear_sheet'))) useCharacterStore.getState().resetActiveCharacter(); setMobileMenuOpen(false); }} className="flex items-center gap-2 p-2 rounded" style={{ background: 'transparent', color: 'var(--muted)', border: `1px solid var(--border)` }}><RotateCcw size={14} /> {t('common.reset')}</button>
               <a href="https://t.me/Oxathioleph" target="_blank" rel="noreferrer" className="flex items-center gap-2 p-2 rounded" style={{ background: 'transparent', color: 'var(--text)', border: `1px solid var(--border)` }}><Send size={14} /> Telegram</a>
+              {isAuthed ? (
+                <button onClick={() => { if (confirm(t('auth.logout_confirm'))) { api.logout(); setMobileMenuOpen(false); } }} className="flex items-center gap-2 p-2 rounded" style={{ background: 'transparent', color: 'var(--muted)', border: `1px solid var(--border)` }}><X size={14} /> {t('auth.logout')}</button>
+              ) : (
+                <button onClick={() => { setMobileMenuOpen(false); setShowAuth(true); }} className="flex items-center gap-2 p-2 rounded" style={{ background: 'var(--accent)', color: 'var(--bg)' }}><Send size={14} /> {t('auth.login')}</button>
+              )}
             </div>
           </div>
         )}
@@ -652,7 +711,38 @@ function App() {
             <Route path="/" element={<Navigate to="/sheet" replace />} />
             <Route path="/sheet" element={<SheetPage showTips={showTips} handleExportPdf={handleExportPdf} />} />
             <Route path="/master" element={<MasterRoute />} />
-            <Route path="/account" element={<AccountRoute />} />
+            <Route
+              path="/account"
+              element={
+                isAuthed ? (
+                  <AccountRoute />
+                ) : (
+                  <div
+                    style={{
+                      display: 'flex', flexDirection: 'column', alignItems: 'center',
+                      justifyContent: 'center', minHeight: '60vh', gap: '16px',
+                      color: 'var(--text)', fontFamily: "'Cinzel', serif",
+                    }}
+                  >
+                    <Skull size={48} style={{ color: 'var(--accent)' }} />
+                    <p style={{ margin: 0, fontSize: '15px', color: 'var(--muted)', textAlign: 'center', maxWidth: '420px' }}>
+                      {t('auth.account_need_login')}
+                    </p>
+                    <button
+                      onClick={() => setShowAuth(true)}
+                      style={{
+                        padding: '10px 28px',
+                        background: 'var(--accent)', color: '#000', fontWeight: 'bold',
+                        border: 'none', borderRadius: '6px', cursor: 'pointer',
+                        fontSize: '14px', fontFamily: "'Georgia', serif",
+                      }}
+                    >
+                      {t('auth.login')}
+                    </button>
+                  </div>
+                )
+              }
+            />
             <Route path="*" element={<Navigate to="/sheet" replace />} />
           </Routes>
         </Suspense>

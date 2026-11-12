@@ -118,7 +118,27 @@
     "merge_cloud": "云端: {cloud} 个角色",
     "merge_local": "本地: {local} 个角色",
     "merge_merge": "合并",
-    "merge_overwrite": "用云端覆盖本地"
+    "merge_overwrite": "用云端覆盖本地",
+    "my_characters": "我的角色",
+    "knowledge_base": "知识库",
+    "interactive_sheet": "交互列表",
+    "classic_sheet": "经典列表",
+    "no_characters": "还没有角色。创建第一个吧！"
+  },
+  "auth": {
+    "account_need_login": "访问个人面板需要账号。",
+    "login": "登录",
+    "register": "注册",
+    "username": "用户名",
+    "password": "密码",
+    "invite_code": "邀请码",
+    "loading": "处理中...",
+    "login_btn": "登录",
+    "register_btn": "注册",
+    "no_account": "没有账号？注册",
+    "has_account": "已有账号？登录",
+    "logout": "退出登录",
+    "logout_confirm": "退出账号？"
   },
   "ui": {
     "name": "名字",

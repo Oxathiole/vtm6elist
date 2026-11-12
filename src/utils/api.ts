@@ -60,6 +60,15 @@ export const api = {
     });
   },
 
+  deleteCharacter: async (id: string) => {
+    const token = api.getToken();
+    if (!token) return;
+    await fetch(`${API_URL}/characters/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
+
   verifyCode: async (code: string): Promise<boolean> => {
     const res = await fetch(`${API_URL}/verify-code`, {
       method: 'POST',

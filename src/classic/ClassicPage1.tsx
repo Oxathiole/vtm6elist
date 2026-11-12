@@ -111,9 +111,9 @@ export const ClassicPage1 = () => {
   return (
     <div className="classic-page">
       <div style={{ textAlign: 'center', marginBottom: '6px' }}>
-        <div style={{ fontSize: '18px', fontWeight: 'bold', letterSpacing: '0.05em' }}>КЛАССИЧЕСКИЕ ПРАВИЛА</div>
-        <div style={{ fontSize: '16px', fontWeight: 'bold', letterSpacing: '0.05em' }}>ВАМПИРЫ</div>
-        <div style={{ fontSize: '10px', letterSpacing: '0.1em', color: 'var(--muted)' }}>† МАСКАРАД †</div>
+        <div style={{ fontSize: '22px', fontWeight: 'bold', letterSpacing: '0.05em' }}>КЛАССИЧЕСКИЕ ПРАВИЛА</div>
+        <div style={{ fontSize: '18px', fontWeight: 'bold', letterSpacing: '0.05em' }}>ВАМПИРЫ</div>
+        <div style={{ fontSize: '12px', letterSpacing: '0.1em', color: 'var(--muted)' }}>† МАСКАРАД †</div>
       </div>
 
       <div className="cl-meta-grid">
@@ -147,10 +147,10 @@ export const ClassicPage1 = () => {
           { t: 'МЕНТАЛЬНЫЕ', c: 'mental', a: [['perception', 'Восприятие'], ['intelligence', 'Интеллект'], ['wits', 'Смекалка']] },
         ].map(({ t, c, a }) => (
           <div key={c}>
-            <div style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '10px', marginBottom: '2px' }}>{t}</div>
+            <div style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '12px', marginBottom: '2px' }}>{t}</div>
             {a.map(([k, l]) => (
               <div key={k} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1px' }}>
-                <span style={{ fontSize: '10px' }}>{l}</span>
+                <span style={{ fontSize: '12px' }}>{l}</span>
                 <Rating value={(character.attributes as any)[c]?.[k] || 0} max={attrCap(k)} onChange={v => updateAttribute(c as any, k, v)} allowZero={k === 'appearance'} />
               </div>
             ))}
@@ -170,16 +170,16 @@ export const ClassicPage1 = () => {
 
           return (
             <div key={c}>
-              <div style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '10px', marginBottom: '2px' }}>{t}</div>
+              <div style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '12px', marginBottom: '2px' }}>{t}</div>
               {l.map(name => (
                 <div key={name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1px' }}>
-                  <span style={{ fontSize: '10px' }}>{name}</span>
+                  <span style={{ fontSize: '12px' }}>{name}</span>
                   <Rating value={abilDict[name] || 0} onChange={v => updateAbility(c as any, name, v)} allowZero />
                 </div>
               ))}
               {customKeys.map(name => (
                 <div key={name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1px' }}>
-                  <span style={{ fontSize: '10px', color: 'var(--accent)' }}>{name}</span>
+                  <span style={{ fontSize: '12px', color: 'var(--accent)' }}>{name}</span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <Rating value={abilDict[name] || 0} onChange={v => updateAbility(c as any, name, v)} allowZero />
                     <button className="no-print" onClick={() => updateAbility(c as any, name, -1)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: '#e74c3c' }}><Trash2 size={10} /></button>
@@ -195,7 +195,7 @@ export const ClassicPage1 = () => {
       <SectionTitle>ПРЕИМУЩЕСТВА</SectionTitle>
       <div className="cl-grid-3" style={{ marginBottom: '6px' }}>
         <div>
-          <div style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '10px', marginBottom: '2px' }}>ДИСЦИПЛИНЫ</div>
+          <div style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '12px', marginBottom: '2px' }}>ДИСЦИПЛИНЫ</div>
           {(character.disciplines || []).map((d, i) => (
             <div key={i} className="cl-named-row">
               <input className="cl-input" value={d.name} onChange={e => updateDiscipline(i, 'name', e.target.value)} />
@@ -203,11 +203,11 @@ export const ClassicPage1 = () => {
               <button className="no-print" onClick={() => removeDiscipline(i)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: '#e74c3c' }}><Trash2 size={10} /></button>
             </div>
           ))}
-          <button className="no-print" onClick={addDiscipline} style={{ background: 'transparent', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '9px', padding: 0 }}>+ Добавить</button>
+          <button className="no-print" onClick={addDiscipline} style={{ background: 'transparent', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '11px', padding: 0 }}>+ Добавить</button>
         </div>
 
         <div>
-          <div style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '10px', marginBottom: '2px' }}>ФАКТЫ БИОГРАФИИ</div>
+          <div style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '12px', marginBottom: '2px' }}>ФАКТЫ БИОГРАФИИ</div>
           {(character.backgrounds || []).map((b, i) => (
             <div key={i} className="cl-named-row">
               <input className="cl-input" value={b.name} onChange={e => updateBackground(i, 'name', e.target.value)} />
@@ -215,14 +215,14 @@ export const ClassicPage1 = () => {
               <button className="no-print" onClick={() => removeBackground(i)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: '#e74c3c' }}><Trash2 size={10} /></button>
             </div>
           ))}
-          <button className="no-print" onClick={addBackground} style={{ background: 'transparent', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '9px', padding: 0 }}>+ Добавить</button>
+          <button className="no-print" onClick={addBackground} style={{ background: 'transparent', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '11px', padding: 0 }}>+ Добавить</button>
         </div>
 
         <div>
-          <div style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '10px', marginBottom: '2px' }}>ДОБРОДЕТЕЛИ</div>
+          <div style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '12px', marginBottom: '2px' }}>ДОБРОДЕТЕЛИ</div>
           {[['conscience', 'СОВЕСТЬ/РЕШИМОСТЬ'], ['selfControl', 'САМОКОНТРОЛЬ/ИНСТИНКТЫ'], ['courage', 'СМЕЛОСТЬ']].map(([k, l]) => (
             <div key={k} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2px', whiteSpace: 'nowrap' }}>
-              <span style={{ fontSize: '9px', fontWeight: 'bold', flexShrink: 0 }}>{l}</span>
+              <span style={{ fontSize: '11px', fontWeight: 'bold', flexShrink: 0 }}>{l}</span>
               <Rating value={character.virtues[k as keyof typeof character.virtues]} shape="square" onChange={v => updateVirtue(k as any, v)} allowZero />
             </div>
           ))}
@@ -252,7 +252,7 @@ export const ClassicPage1 = () => {
               ))}
               <tr className="no-print">
                 <td colSpan={3} style={{ textAlign: 'center', padding: 0 }}>
-                  <button onClick={addSpecialization} style={{ background: 'transparent', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '9px', width: '100%' }}>+ Добавить</button>
+                  <button onClick={addSpecialization} style={{ background: 'transparent', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '11px', width: '100%' }}>+ Добавить</button>
                 </td>
               </tr>
             </tbody>
@@ -262,7 +262,7 @@ export const ClassicPage1 = () => {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <SectionTitle>ЧЕЛОВЕЧНОСТЬ/ПУТЬ</SectionTitle>
           <Rating value={character.humanity} max={10} onChange={v => updateField('humanity', v)} allowZero />
-          <div style={{ fontSize: '9px', marginTop: '2px', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <div style={{ fontSize: '11px', marginTop: '2px', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
             СТОЙК: <input className="cl-input" style={{ width: '60px', height: '14px' }} placeholder="( )" />
           </div>
 
@@ -281,7 +281,7 @@ export const ClassicPage1 = () => {
               <button key={i} className="cl-blood-box" style={{ width: '12px', height: '12px' }} disabled />
             ))}
           </div>
-          <div style={{ fontSize: '8px', marginTop: '2px', textTransform: 'uppercase' }}>
+          <div style={{ fontSize: '11px', marginTop: '2px', textTransform: 'uppercase' }}>
             ПРЕДЕЛ ТРАТЫ В ХОД: <input type="number" className="cl-input" value={character.bloodPool.perTurn} readOnly style={{ width: '20px', textAlign: 'center', height: '14px', padding: 0 }} />
           </div>
         </div>
@@ -296,7 +296,7 @@ export const ClassicPage1 = () => {
                 <button
                   className={`cl-dot square ${(character.health?.squares?.[i] ?? 0) > 0 ? 'filled' : ''}`}
                   onClick={() => updateHealth(i)}
-                  style={{ fontSize: '10px', lineHeight: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: '15px', minHeight: '12px', padding: 0 }}
+                  style={{ fontSize: '12px', lineHeight: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: '18px', minHeight: '14px', padding: 0 }}
                 >
                   {character.health?.squares?.[i] === 1 ? '/' : character.health?.squares?.[i] === 2 ? 'X' : character.health?.squares?.[i] === 3 ? 'Ж' : ''}
                 </button>
@@ -317,7 +317,7 @@ export const ClassicPage1 = () => {
       <SectionTitle>ДОСТИЖЕНИЯ / ОСОБЫЕ ЧЕРТЫ / ОБРЯДЫ</SectionTitle>
       <div className="cl-grid-3" style={{ marginBottom: '6px' }}>
         <div>
-          <div style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '10px', marginBottom: '2px' }}>НЕДОСТАТКИ</div>
+          <div style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '12px', marginBottom: '2px' }}>НЕДОСТАТКИ</div>
           {(character.merits || []).map((m, i) => (
             <div key={i} className="cl-named-row">
               <input className="cl-input" value={m.name} onChange={e => updateMerit(i, 'name', e.target.value)} />
@@ -325,11 +325,11 @@ export const ClassicPage1 = () => {
               <button className="no-print" onClick={() => removeMerit(i)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: '#e74c3c' }}><Trash2 size={10} /></button>
             </div>
           ))}
-          <button className="no-print" onClick={addMerit} style={{ background: 'transparent', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '9px' }}>+ Добавить</button>
+          <button className="no-print" onClick={addMerit} style={{ background: 'transparent', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '11px' }}>+ Добавить</button>
         </div>
 
         <div>
-          <div style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '10px', marginBottom: '2px' }}>ДОСТОИНСТВА</div>
+          <div style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '12px', marginBottom: '2px' }}>ДОСТОИНСТВА</div>
           {(character.otherTraits || []).map((t, i) => (
             <div key={i} className="cl-named-row">
               <input className="cl-input" value={t.name} onChange={e => updateOtherTrait(i, 'name', e.target.value)} />
@@ -337,11 +337,11 @@ export const ClassicPage1 = () => {
               <button className="no-print" onClick={() => removeOtherTrait(i)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: '#e74c3c' }}><Trash2 size={10} /></button>
             </div>
           ))}
-          <button className="no-print" onClick={addOtherTrait} style={{ background: 'transparent', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '9px' }}>+ Добавить</button>
+          <button className="no-print" onClick={addOtherTrait} style={{ background: 'transparent', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '11px' }}>+ Добавить</button>
         </div>
 
         <div>
-          <div style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '10px', marginBottom: '2px' }}>ОБРЯДЫ</div>
+          <div style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '12px', marginBottom: '2px' }}>ОБРЯДЫ</div>
           {(character.rituals || []).map((r, i) => (
             <div key={i} className="cl-named-row">
               <input className="cl-input" value={r.name} onChange={e => updateRitual(i, 'name', e.target.value)} />
@@ -349,7 +349,7 @@ export const ClassicPage1 = () => {
               <button className="no-print" onClick={() => removeRitual(i)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: '#e74c3c' }}><Trash2 size={10} /></button>
             </div>
           ))}
-          <button className="no-print" onClick={addRitual} style={{ background: 'transparent', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '9px' }}>+ Добавить</button>
+          <button className="no-print" onClick={addRitual} style={{ background: 'transparent', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '11px' }}>+ Добавить</button>
         </div>
       </div>
 
