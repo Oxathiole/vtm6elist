@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { STR, L } from './data';
 import { ClassicSheetData } from './types';
-import { SectionTitle, LinedTextarea, Field } from './ui';
+import { SectionTitle, Field } from './ui';
 import { useClassicStore } from './store';
 
 interface ClassicPage2Props {
@@ -40,8 +40,20 @@ export const ClassicPage2: FC<ClassicPage2Props> = ({ activeId, data }) => {
     patch(activeId, { combat: list });
   };
 
-  const setLongText = (key: 'history' | 'goals' | 'description' | 'allies' | 'contacts' | 'property' | 'equipment' | 'weakness' | 'experience', value: string) => {
+  const setLongText = (key: 'weakness' | 'experience' | 'allies' | 'enemies' | 'property' | 'equipment', value: string) => {
     patch(activeId, { [key]: value } as Partial<ClassicSheetData>);
+  };
+
+  const setRowText = (key: 'history' | 'goals' | 'description', index: number, value: string) => {
+    const list = [...data[key]];
+    list[index] = value;
+    patch(activeId, { [key]: list } as Partial<ClassicSheetData>);
+  };
+
+  const setContact = (index: number, field: 'name' | 'role' | 'notes', value: string) => {
+    const list = [...data.contacts];
+    list[index] = { ...list[index], [field]: value };
+    patch(activeId, { contacts: list });
   };
 
   return (
@@ -143,27 +155,45 @@ export const ClassicPage2: FC<ClassicPage2Props> = ({ activeId, data }) => {
 
           {/* History */}
           <SectionTitle>{L(STR.section.history.ru, STR.section.history.en)}</SectionTitle>
-          <LinedTextarea
-            value={data.history}
-            onChange={v => setLongText('history', v)}
-            lines={6}
-          />
+          <table className="cl-table" style={{ width: '100%', fontSize: '9px' }}>
+            <tbody>
+              {data.history.map((h: string, i: number) => (
+                <tr key={i}>
+                  <td style={{ padding: '1px 2px' }}>
+                    <input type="text" className="cl-input" value={h} onChange={e => setRowText('history', i, e.target.value)} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
           {/* Goals */}
           <SectionTitle>{L(STR.section.goals.ru, STR.section.goals.en)}</SectionTitle>
-          <LinedTextarea
-            value={data.goals}
-            onChange={v => setLongText('goals', v)}
-            lines={4}
-          />
+          <table className="cl-table" style={{ width: '100%', fontSize: '9px' }}>
+            <tbody>
+              {data.goals.map((g: string, i: number) => (
+                <tr key={i}>
+                  <td style={{ padding: '1px 2px' }}>
+                    <input type="text" className="cl-input" value={g} onChange={e => setRowText('goals', i, e.target.value)} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
           {/* Description */}
           <SectionTitle>{L(STR.section.description.ru, STR.section.description.en)}</SectionTitle>
-          <LinedTextarea
-            value={data.description}
-            onChange={v => setLongText('description', v)}
-            lines={4}
-          />
+          <table className="cl-table" style={{ width: '100%', fontSize: '9px' }}>
+            <tbody>
+              {data.description.map((d: string, i: number) => (
+                <tr key={i}>
+                  <td style={{ padding: '1px 2px' }}>
+                    <input type="text" className="cl-input" value={d} onChange={e => setRowText('description', i, e.target.value)} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
           {/* Details */}
           <SectionTitle>{L(STR.fields.details.birthDate.ru, STR.fields.details.birthDate.en)}</SectionTitle>
@@ -186,21 +216,74 @@ export const ClassicPage2: FC<ClassicPage2Props> = ({ activeId, data }) => {
             <Field label={L(STR.fields.experience.ru, STR.fields.experience.en)} value={data.experience} onChange={v => setLongText('experience', v)} />
           </div>
 
-          {/* Allies and Contacts */}
+          {/* Allies */}
           <SectionTitle>{L(STR.section.allies.ru, STR.section.allies.en)}</SectionTitle>
-          <LinedTextarea
-            value={data.allies}
-            onChange={v => setLongText('allies', v)}
-            lines={3}
-          />
+          <table className="cl-table" style={{ width: '100%', fontSize: '9px' }}>
+            <tbody>
+              {Array.from({ length: 2 }).map((_, i) => (
+                <tr key={i}>
+                  <td style={{ padding: '1px 2px' }}>
+                    <input type="text" className="cl-input" value={data.allies} onChange={e => setLongText('allies', e.target.value)} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* Enemies */}
+          <SectionTitle>{L(STR.section.enemies.ru, STR.section.enemies.en)}</SectionTitle>
+          <table className="cl-table" style={{ width: '100%', fontSize: '9px' }}>
+            <tbody>
+              {Array.from({ length: 2 }).map((_, i) => (
+                <tr key={i}>
+                  <td style={{ padding: '1px 2px' }}>
+                    <input type="text" className="cl-input" value={data.enemies} onChange={e => setLongText('enemies', e.target.value)} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* Contacts */}
+          <SectionTitle>{L(STR.section.contacts.ru, STR.section.contacts.en)}</SectionTitle>
+          <table className="cl-table" style={{ width: '100%', fontSize: '9px' }}>
+            <thead>
+              <tr>
+                <th style={{ padding: '2px 3px', width: '30%' }}>{L('Имя', 'Name')}</th>
+                <th style={{ padding: '2px 3px', width: '25%' }}>{L('Роль', 'Role')}</th>
+                <th style={{ padding: '2px 3px' }}>{L('Примечание', 'Note')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.contacts.map((c: any, i: number) => (
+                <tr key={i}>
+                  <td style={{ padding: '1px 2px' }}>
+                    <input type="text" className="cl-input" value={c.name} onChange={e => setContact(i, 'name', e.target.value)} />
+                  </td>
+                  <td style={{ padding: '1px 2px' }}>
+                    <input type="text" className="cl-input" value={c.role} onChange={e => setContact(i, 'role', e.target.value)} />
+                  </td>
+                  <td style={{ padding: '1px 2px' }}>
+                    <input type="text" className="cl-input" value={c.notes} onChange={e => setContact(i, 'notes', e.target.value)} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
           {/* Property and Equipment */}
           <SectionTitle>{L(STR.section.property.ru, STR.section.property.en)}</SectionTitle>
-          <LinedTextarea
-            value={data.property}
-            onChange={v => setLongText('property', v)}
-            lines={3}
-          />
+          <table className="cl-table" style={{ width: '100%', fontSize: '9px' }}>
+            <tbody>
+              {Array.from({ length: 3 }).map((_, i) => (
+                <tr key={i}>
+                  <td style={{ padding: '1px 2px' }}>
+                    <input type="text" className="cl-input" value={data.property} onChange={e => setLongText('property', e.target.value)} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
           {/* Combat */}
           <SectionTitle>{L(STR.section.combat.ru, STR.section.combat.en)}</SectionTitle>
@@ -230,14 +313,6 @@ export const ClassicPage2: FC<ClassicPage2Props> = ({ activeId, data }) => {
               ))}
             </tbody>
           </table>
-
-          {/* Contacts (separate small section) */}
-          <SectionTitle>{L('Контакты', 'Contacts')}</SectionTitle>
-          <LinedTextarea
-            value={data.contacts}
-            onChange={v => setLongText('contacts', v)}
-            lines={2}
-          />
 
         </div>
       </div>

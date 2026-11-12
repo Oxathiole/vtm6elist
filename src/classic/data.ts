@@ -186,7 +186,9 @@ export const STR = {
     history: { ru: 'ИСТОРИЯ', en: 'History' },
     goals: { ru: 'ЦЕЛИ', en: 'Goals' },
     description: { ru: 'ОПИСАНИЕ', en: 'Description' },
-    allies: { ru: 'СОЮЗНИКИ И КОНТАКТЫ', en: 'Allies and Contacts' },
+    allies: { ru: 'СОЮЗНИКИ', en: 'Allies' },
+    enemies: { ru: 'ВРАГИ', en: 'Enemies' },
+    contacts: { ru: 'КОНТАКТЫ', en: 'Contacts' },
     property: { ru: 'ИМУЩЕСТВО И СНАРЯЖЕНИЕ', en: 'Property and Equipment' },
     combat: { ru: 'БОЕВЫЕ СТОЛКНОВЕНИЯ', en: 'Combat' },
   },
@@ -231,7 +233,9 @@ export const createDefaultClassic = () => ({
   backgrounds: Array.from({ length: 6 }, () => ({ id: '', dots: 0 })),
   virtues: { conscience: 1, selfControl: 1, courage: 1 },
   humanity: 7,
+  humanityPath: '',
   humanityNote: '',
+  bearing: '',
   willpower: { permanent: 5, current: 5 },
   blood: { current: 10, max: 10, perTurn: 1 },
   health: [0, 0, 0, 0, 0, 0, 0],
@@ -241,9 +245,11 @@ export const createDefaultClassic = () => ({
   merits: Array.from({ length: 20 }, () => ({ name: '', cost: '' })),
   otherTraits: Array.from({ length: 12 }, () => ({ name: '', dots: 0 })),
   rituals: Array.from({ length: 10 }, () => ({ name: '', level: '' })),
-  history: '', goals: '', description: '',
+  history: Array.from({ length: 6 }, () => ''),
+  goals: Array.from({ length: 4 }, () => ''),
+  description: Array.from({ length: 4 }, () => ''),
   details: { birthDate: '', apparentAge: '', dateOfDeath: '', gender: '', race: '', hair: '', eyes: '', heightWeight: '', build: '', nationality: '' },
-  allies: '', contacts: '',
+  allies: '', enemies: '', contacts: Array.from({ length: 6 }, () => ({ name: '', role: '', notes: '' })),
   property: '', equipment: '',
   combat: Array.from({ length: 4 }, () => ({ weapon: '', difficulty: '', damage: '', range: '', rate: '', clip: '', size: '' })),
 });
@@ -340,14 +346,32 @@ export const ensureShape = (d: any): any => {
   out.demeanor = d?.demeanor ?? '';
   out.concept = d?.concept ?? '';
   out.clan = d?.clan ?? '';
+  out.humanityPath = d?.humanityPath ?? '';
   out.humanityNote = d?.humanityNote ?? '';
+  out.bearing = d?.bearing ?? '';
   out.weakness = d?.weakness ?? '';
   out.experience = d?.experience ?? '';
-  out.history = d?.history ?? '';
-  out.goals = d?.goals ?? '';
-  out.description = d?.description ?? '';
+  out.history = Array.from({ length: 6 }, (_, i) => {
+    const v = d?.history;
+    if (Array.isArray(v)) return v[i] ?? '';
+    return v ?? '';
+  });
+  out.goals = Array.from({ length: 4 }, (_, i) => {
+    const v = d?.goals;
+    if (Array.isArray(v)) return v[i] ?? '';
+    return v ?? '';
+  });
+  out.description = Array.from({ length: 4 }, (_, i) => {
+    const v = d?.description;
+    if (Array.isArray(v)) return v[i] ?? '';
+    return v ?? '';
+  });
   out.allies = d?.allies ?? '';
-  out.contacts = d?.contacts ?? '';
+  out.enemies = d?.enemies ?? '';
+  out.contacts = Array.from({ length: 6 }, (_, i) => {
+    const v = d?.contacts?.[i];
+    return v ? { name: v.name ?? '', role: v.role ?? '', notes: v.notes ?? '' } : { name: '', role: '', notes: '' };
+  });
   out.property = d?.property ?? '';
   out.equipment = d?.equipment ?? '';
   return out;

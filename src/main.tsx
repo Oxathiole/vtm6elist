@@ -3,9 +3,9 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App.tsx';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { initSync } from './lib/sync';
 import './index.css';
 import './i18n';
+import { initSync } from './lib/sync';
 
 // Каркас синка с Supabase: пока stub, ничего не делает.
 initSync();

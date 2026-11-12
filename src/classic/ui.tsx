@@ -8,13 +8,13 @@ interface SectionTitleProps {
  * по бокам горизонтальные линии с ромбами «◆» на концах. */
 export const SectionTitle: FC<SectionTitleProps> = ({ children }) => (
   <div className="cl-section-title" style={{ display: 'flex', alignItems: 'center', gap: '6px', margin: '8px 0 6px' }}>
-    <span className="cl-line" style={{ flex: 1, height: '1px', background: '#141414' }} />
-    <span style={{ fontSize: '10px', color: '#141414', fontWeight: 'bold' }}>◆</span>
-    <span style={{ fontSize: '13px', fontWeight: 'bold', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#141414', textAlign: 'center', flex: 1 }}>
+    <span className="cl-line" style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
+    <span style={{ fontSize: '10px', color: 'var(--text)', fontWeight: 'bold' }}>◆</span>
+    <span style={{ fontSize: '13px', fontWeight: 'bold', letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text)', textAlign: 'center', flex: 1 }}>
       {children}
     </span>
-    <span style={{ fontSize: '10px', color: '#141414', fontWeight: 'bold' }}>◆</span>
-    <span className="cl-line" style={{ flex: 1, height: '1px', background: '#141414' }} />
+    <span style={{ fontSize: '10px', color: 'var(--text)', fontWeight: 'bold' }}>◆</span>
+    <span className="cl-line" style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
   </div>
 );
 
@@ -67,9 +67,9 @@ export const Rating: FC<RatingProps> = ({ value, max, min = 0, onChange, shape =
               padding: 0,
               flexShrink: 0,
               cursor: 'pointer',
-              border: '1px solid #141414',
+              border: '1px solid var(--border)',
               borderRadius: isSquare ? '0' : '50%',
-              background: isFilled ? '#141414' : '#fff',
+              background: isFilled ? 'var(--accent)' : 'var(--panel)',
               transition: 'all 0.1s',
             }}
           />
@@ -93,13 +93,13 @@ export const LinedTextarea: FC<LinedTextareaProps> = ({ value, onChange, lines }
     style={{
       lineHeight: '22px',
       height: `${lines * 22}px`,
-      background: 'repeating-linear-gradient(transparent 0 21px, #b9b09a 21px 22px)',
+      background: 'repeating-linear-gradient(transparent 0 21px, var(--border) 21px 22px)',
       border: 'none',
       resize: 'none',
       font: 'inherit',
       width: '100%',
       boxSizing: 'border-box',
-      color: '#141414',
+      color: 'var(--text)',
       fontFamily: "Georgia, 'Times New Roman', serif",
       fontSize: '12px',
       margin: 0,
@@ -118,18 +118,18 @@ interface FieldProps {
 /** Подпись мелким шрифтом + текстовый input с нижней границей. */
 export const Field: FC<FieldProps> = ({ label, value, onChange, width = '100%' }) => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-    <label style={{ fontSize: '9px', color: '#141414', letterSpacing: '0.06em', textTransform: 'uppercase', fontWeight: 'bold', marginBottom: '1px' }}>{label}</label>
+    <label style={{ fontSize: '9px', color: 'var(--text)', letterSpacing: '0.06em', textTransform: 'uppercase', fontWeight: 'bold', marginBottom: '1px' }}>{label}</label>
     <input
       type="text"
       value={value ?? ''}
       onChange={e => onChange(e.target.value)}
       style={{
         width,
-        background: '#fbf7e8',
+        background: 'var(--input-bg)',
         border: 'none',
-        borderBottom: '1px solid #6b6350',
+        borderBottom: '1px solid var(--border)',
         outline: 'none',
-        color: '#141414',
+        color: 'var(--text)',
         font: 'inherit',
         fontFamily: "Georgia, 'Times New Roman', serif",
         fontSize: '11px',
@@ -164,9 +164,9 @@ export const HealthTrack: FC<HealthTrackProps> = ({ value, onChange }) => {
             style={{
               width: '16px',
               height: '16px',
-              border: '1px solid #141414',
-              background: '#fff',
-              color: '#141414',
+              border: '1px solid var(--border)',
+              background: 'var(--panel)',
+              color: 'var(--text)',
               fontWeight: 'bold',
               fontSize: '12px',
               display: 'inline-flex',

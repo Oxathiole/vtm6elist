@@ -3,8 +3,8 @@ import { useCharacterStore } from '../store';
 import { DashedDotRating } from './DashedDotRating';
 import { useTranslation } from 'react-i18next';
 import { NATURES_LIST, ALL_LIFE_PATHS, MORTAL_LIFE_PATHS, VAMPIRE_LIFE_PATHS, DISCIPLINES_LIST } from '../types';
-import { useIsMobile } from '../hooks/useIsMobile';
-import { getDisciplineCap } from '../utils/limits';
+import { useIsMobile } from '../hooks';
+import { getDisciplineCap } from '../utils/caps';
 
 const AnkhIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">

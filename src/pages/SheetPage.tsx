@@ -4,7 +4,7 @@ import { SheetPage1 } from '../components/SheetPage1';
 import { SheetPage2 } from '../components/SheetPage2';
 import { SheetPage3 } from '../components/SheetPage3';
 import { SheetPageInventory } from '../components/SheetPageInventory';
-import { useSheetHotkeys } from '../hooks/useSheetHotkeys';
+import { useSheetHotkeys } from '../hooks';
 import React, { Suspense, lazy } from 'react';
 const SheetPage4 = lazy(() => import('../components/SheetPage4').then(m => ({ default: m.SheetPage4 })));
 

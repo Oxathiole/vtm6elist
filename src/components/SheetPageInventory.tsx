@@ -1,6 +1,6 @@
 import { useCharacterStore } from '../store';
 import { useTranslation } from 'react-i18next';
-import { useIsMobile } from '../hooks/useIsMobile';
+import { useIsMobile } from '../hooks';
 
 const sheetStyle: React.CSSProperties = {
   width: '210mm',

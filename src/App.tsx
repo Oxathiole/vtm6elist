@@ -5,15 +5,15 @@ import i18n, { t, loadAndChangeLanguage } from './i18n';
 import { VAMPIRE_TYPES, CREATION_RULES } from './types';
 import { safeStorage } from './utils/storage';
 import { THEMES, DEFAULT_THEME_ID } from './themes';
-import { useUIStore } from './uiStore';
+import { Download, Upload, FileJson, RotateCcw, Menu, X, Send, BookOpen, Globe, History as HistoryIcon, HelpCircle, Moon } from 'lucide-react';
+import { NavLink, Navigate, Routes, Route, useNavigate } from 'react-router-dom';
 import { api } from './utils/api';
 import { AuthScreen } from './components/AuthScreen';
-import { Download, Upload, FileJson, RotateCcw, Menu, X, Send, BookOpen, Globe, History as HistoryIcon, HelpCircle, Moon } from 'lucide-react';
-import { NavLink, Navigate, Routes, Route } from 'react-router-dom';
+import { initSync } from './lib/sync';
 const SheetPage = lazy(() => import('./pages/SheetPage').then(m => ({ default: m.SheetPage })));
 const MasterRoute = lazy(() => import('./pages/MasterRoute').then(m => ({ default: m.MasterRoute })));
 const AccountRoute = lazy(() => import('./pages/AccountRoute').then(m => ({ default: m.AccountRoute })));
-const ClassicSheetPage = lazy(() => import('./classic/ClassicSheetPage').then(m => ({ default: m.ClassicSheetPage })));
+const ClassicPage = lazy(() => import('./classic/ClassicSheetPage').then(m => ({ default: m.ClassicSheetPage })));
 
 const NavTab = ({ to, label, end }: { to: string; label: string; end?: boolean }) => (
   <NavLink
@@ -38,6 +38,7 @@ const NavTab = ({ to, label, end }: { to: string; label: string; end?: boolean }
 );
 
 function App() {
+  const navigate = useNavigate();
   const [isAuthed, setIsAuthed] = useState(!!api.getToken());
   const [hasMasterCode, setHasMasterCode] = useState(!!safeStorage.get('vtm6e-master-code'));
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -437,8 +438,8 @@ function App() {
           <div style={{ display: 'flex', gap: '6px' }}>
               <NavTab to="/sheet" end label={t('nav.sheet')} />
               <NavTab to="/master" label={t('nav.master')} />
-              <NavTab to="/classic" label={t('nav.classic')} />
               <NavTab to="/account" label={t('nav.account')} />
+              <NavTab to="/classic" label={t('nav.classic')} />
             </div>
         
           <div style={{ height: '20px', width: '1px', background: 'var(--border)' }} />
@@ -590,8 +591,9 @@ function App() {
           <div style={{ background: 'var(--panel)', borderTop: '1px solid var(--border)', padding: '8px 12px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               <NavLink to="/sheet" end className="flex items-center gap-2 p-2 rounded" style={({ isActive }) => ({ background: isActive ? 'var(--accent)' : 'transparent', color: isActive ? 'var(--bg)' : 'var(--text)', border: `1px solid ${isActive ? 'var(--accent)' : 'var(--border)'}` })}>{t('nav.sheet')}</NavLink>
-              <NavLink to="/master" className="flex items-center gap-2 p-2 rounded" style={({ isActive }) => ({ background: isActive ? 'var(--accent)' : 'transparent', color: isActive ? 'var(--bg)' : 'var(--text)', border: `1px solid ${isActive ? 'var(--accent)' : 'var(--border)'}` })}>{t('nav.master')}</NavLink>
-              <NavLink to="/account" className="flex items-center gap-2 p-2 rounded" style={({ isActive }) => ({ background: isActive ? 'var(--accent)' : 'transparent', color: isActive ? 'var(--bg)' : 'var(--text)', border: `1px solid ${isActive ? 'var(--accent)' : 'var(--border)'}` })}>{t('nav.account')}</NavLink>
+              <button onClick={() => { setMobileMenuOpen(false); navigate('/master'); }}>{t('nav.master')}</button>
+              <button onClick={() => { setMobileMenuOpen(false); navigate('/account'); }}>{t('nav.account')}</button>
+              <button onClick={() => { setMobileMenuOpen(false); navigate('/classic'); }}>{t('nav.classic')}</button>
               <button onClick={() => { setShowSummary(true); setMobileMenuOpen(false); }} className="flex items-center gap-2 p-2 rounded" style={{ background: 'transparent', color: 'var(--text)', border: `1px solid var(--border)` }}><BookOpen size={14} /> {t('common.summary_rules')}</button>
               <button onClick={async () => { const { exportJSON } = await import('./utils/exportImport'); exportJSON(character); setMobileMenuOpen(false); }} className="flex items-center gap-2 p-2 rounded" style={{ background: 'transparent', color: 'var(--text)', border: `1px solid var(--border)` }}><FileJson size={14} /> {t('common.export_json')}</button>
               <button onClick={() => { fileInputRef.current?.click(); setMobileMenuOpen(false); }} className="flex items-center gap-2 p-2 rounded" style={{ background: 'transparent', color: 'var(--text)', border: `1px solid var(--border)` }}><Upload size={14} /> {t('common.import_json')}</button>
@@ -647,8 +649,8 @@ function App() {
             <Route path="/" element={<Navigate to="/sheet" replace />} />
             <Route path="/sheet" element={<SheetPage showTips={showTips} handleExportPdf={handleExportPdf} />} />
             <Route path="/master" element={<MasterRoute />} />
-            <Route path="/classic" element={<ClassicSheetPage />} />
             <Route path="/account" element={<AccountRoute />} />
+            <Route path="/classic" element={<ClassicPage />} />
             <Route path="*" element={<Navigate to="/sheet" replace />} />
           </Routes>
         </Suspense>

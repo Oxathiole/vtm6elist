@@ -5,7 +5,7 @@ import { DISCIPLINES_LIST } from '../types';
 import { useTranslation } from 'react-i18next';
 import { Trash2, Plus } from 'lucide-react';
 import type { PowerPage, DisciplineCard } from '../types';
-import { useIsMobile } from '../hooks/useIsMobile';
+import { useIsMobile } from '../hooks';
 
 
 export const SheetPage4 = ({ page, pageIndex }: { page: PowerPage; pageIndex: number }) => {

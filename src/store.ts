@@ -4,9 +4,7 @@ import { CharacterSheet, SKILLS_LIST, CLAN_DATA, VAMPIRE_TYPES, NOSTALGIA_DECADE
 import { t } from './i18n';
 import { debouncedStorage } from './utils/debouncedStorage';
 import { useUIStore } from './uiStore';
-import { getAttributeCap, getSkillCap, getDisciplineCap } from './utils/limits';
-import { normalizeHistory } from './utils/migrate';
-import { deleteCharacter, endDelete } from './lib/sync';
+import { getAttributeCap, getSkillCap, getDisciplineCap, normalizeHistory } from './utils/caps';
 
 const generateId = () => {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
@@ -714,11 +712,6 @@ export const useCharacterStore = create<CharacterStore>()(
       },
 
       removeCharacter: async (id) => {
-        try {
-          await deleteCharacter(id);
-        } catch (e) {
-          // синк-ошибка не блокирует локальное удаление
-        }
         set(state => {
           const remaining = state.characters.filter(c => c.id !== id);
           if (remaining.length === 0) {
@@ -727,7 +720,6 @@ export const useCharacterStore = create<CharacterStore>()(
           }
           return { characters: remaining, activeId: state.activeId === id ? remaining[0].id : state.activeId };
         });
-        endDelete(id);
       },
 
       addPowerPage: () => set(state => updateActive(state, c => {

@@ -1,10 +1,16 @@
-// Хоткейсы Ctrl+S (JSON) / Ctrl+P (PDF) — активны ТОЛЬКО на странице листа.
-// Хук монтируется внутри SheetPage, поэтому при переходе на /account или /master
-// слушатель удаляется и хоткейсы не срабатывают.
+// Хуки листа: мобильность (отключена) и хоткейсы Ctrl+S / Ctrl+P.
 import { useEffect, useRef } from 'react';
 import { useCharacterStore } from '../store';
 import { exportJSON } from '../utils/exportImport';
 
+/** Мобильный режим полностью отключен */
+export const useIsMobile = () => {
+  return false;
+};
+
+// Хоткейсы Ctrl+S (JSON) / Ctrl+P (PDF) — активны ТОЛЬКО на странице листа.
+// Хук монтируется внутри SheetPage, поэтому при переходе на /account или /master
+// слушатель удаляется и хоткейсы не срабатывают.
 export function useSheetHotkeys(handleExportPdf: () => void) {
   const pdfRef = useRef(handleExportPdf);
   useEffect(() => {

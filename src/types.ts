@@ -370,31 +370,6 @@ interface CreationRules {
   maxAttr: number;
 }
 
-export const CREATION_RULES: Record<string, CreationRules> = {
-  'vampire_neonate': { paths: 2, attrs: '7/5/3', disc: '3+1', powers: 4, merits: 1, traits: 2, skills: '8 + 5 + 5 = 18', resources: '3 + 3 + 3 = 9', maxDisc: 5, maxAttr: 5 },
-  'ancilla':         { paths: 2, attrs: '7/5/3', disc: '3+1', powers: 4, merits: 1, traits: 2, skills: '8 + 5 + 5 = 18', resources: '3 + 3 + 3 = 9', maxDisc: 6, maxAttr: 6 },
-  'elder':           { paths: 2, attrs: '7/5/3', disc: '3+1', powers: 4, merits: 1, traits: 2, skills: '8 + 5 + 5 = 18', resources: '3 + 3 + 3 = 9', maxDisc: 8, maxAttr: 8 },
-  'duskborn':        { paths: 2, attrs: '7/5/3', disc: '3+1', powers: 4, merits: 1, traits: 2, skills: '8 + 5 + 5 = 18', resources: '3 + 3 + 3 = 9', maxDisc: 5, maxAttr: 5 },
-};
-
-export function normalizeId(value: string): string {
-  if (!value) return value;
-  // Если уже ID (lowercase, только латиница/подчёркивания) — возвращаем как есть
-  if (/^[a-z0-9_]+$/.test(value)) return value;
-  // Иначе пробуем найти по русскому названию
-  const found = RU_TO_ID[value];
-  return found || value;
-}
-
-// ============================================================
-// История изменений
-// ============================================================
-export interface HistoryItem {
-  id: string;
-  timestamp: number;
-  changes: string[];
-}
-
 // ============================================================
 // ЛИСТ МАСТЕРА — типы
 // ============================================================
@@ -427,3 +402,29 @@ export interface MasterSheet {
   activeCampaignId: string | null;
   npcText: string;
 }
+
+export const CREATION_RULES: Record<string, CreationRules> = {
+  'vampire_neonate': { paths: 2, attrs: '7/5/3', disc: '3+1', powers: 4, merits: 1, traits: 2, skills: '8 + 5 + 5 = 18', resources: '3 + 3 + 3 = 9', maxDisc: 5, maxAttr: 5 },
+  'ancilla':         { paths: 2, attrs: '7/5/3', disc: '3+1', powers: 4, merits: 1, traits: 2, skills: '8 + 5 + 5 = 18', resources: '3 + 3 + 3 = 9', maxDisc: 6, maxAttr: 6 },
+  'elder':           { paths: 2, attrs: '7/5/3', disc: '3+1', powers: 4, merits: 1, traits: 2, skills: '8 + 5 + 5 = 18', resources: '3 + 3 + 3 = 9', maxDisc: 8, maxAttr: 8 },
+  'duskborn':        { paths: 2, attrs: '7/5/3', disc: '3+1', powers: 4, merits: 1, traits: 2, skills: '8 + 5 + 5 = 18', resources: '3 + 3 + 3 = 9', maxDisc: 5, maxAttr: 5 },
+};
+
+export function normalizeId(value: string): string {
+  if (!value) return value;
+  // Если уже ID (lowercase, только латиница/подчёркивания) — возвращаем как есть
+  if (/^[a-z0-9_]+$/.test(value)) return value;
+  // Иначе пробуем найти по русскому названию
+  const found = RU_TO_ID[value];
+  return found || value;
+}
+
+// ============================================================
+// История изменений
+// ============================================================
+export interface HistoryItem {
+  id: string;
+  timestamp: number;
+  changes: string[];
+}
+

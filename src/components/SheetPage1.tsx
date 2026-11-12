@@ -4,12 +4,12 @@ import { t } from '../i18n';
 import { SKILLS_LIST, NOSTALGIA_DECADES, VAMPIRE_TYPES, CLANS_LIST, SIRE_TYPES_LIST, DISCIPLINES_LIST } from '../types';
 import { DotRating } from './DotRating';
 import { HumanityTracker } from './HumanityTracker';
-import { useIsMobile } from '../hooks/useIsMobile';
+import { useIsMobile } from '../hooks';
 import { Tooltip } from './Tooltip';
 import { TOOLTIPS } from '../data/tooltips';
 import { useUIStore } from '../uiStore';
 import { Lock, Unlock } from 'lucide-react';
-import { getAttributeCap, getSkillCap } from '../utils/limits';
+import { getAttributeCap, getSkillCap } from '../utils/caps';
 
 const ATTR_GROUPS = [
   { key: 'physical' as const, title: 'attributes_groups.physical', attrs: ['strength', 'dexterity', 'stamina'] },

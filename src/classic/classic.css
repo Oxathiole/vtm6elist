@@ -1,4 +1,4 @@
-/* ===== КЛАССИЧЕСКИЙ ЛИСТ V20 — все стили не зависят от темы сайта ===== */
+/* ===== КЛАССИЧЕСКИЙ ЛИСТ V20 — стили привязаны к теме сайта ===== */
 
 .cl-page-wrapper {
   width: 100%;
@@ -8,11 +8,11 @@
 }
 
 .classic-page {
-  background: #f6f1de;
-  color: #141414;
-  border: 3px solid #8a6d1f;
-  outline: 1px solid #141414;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+  background: var(--panel);
+  color: var(--text);
+  border: 3px solid var(--accent);
+  outline: 1px solid var(--border);
+  box-shadow: 0 6px 24px var(--glow);
   box-sizing: border-box;
   width: 210mm;
   min-height: 297mm;
@@ -23,29 +23,29 @@
 
 /* Заголовки секций */
 .cl-section-title { display: flex; align-items: center; gap: 6px; margin: 8px 0 6px; }
-.cl-section-title .cl-line { flex: 1; height: 1px; background: #141414; }
+.cl-section-title .cl-line { flex: 1; height: 1px; background: var(--border); }
 
 /* Общие инпуты внутри листа */
 .cl-input, .cl-select, .cl-textarea {
-  background: #fbf7e8;
+  background: var(--input-bg);
   border: none;
-  border-bottom: 1px solid #6b6350;
+  border-bottom: 1px solid var(--border);
   outline: none;
-  color: #141414;
+  color: var(--text);
   font-family: Georgia, 'Times New Roman', serif;
   font-size: 11px;
   box-sizing: border-box;
 }
 .cl-input:focus, .cl-select:focus, .cl-textarea:focus {
-  border-bottom-color: #8a6d1f;
+  border-bottom-color: var(--accent);
 }
 .cl-select { appearance: auto; cursor: pointer; }
-.cl-select option { color: #141414; background-color: #fbf7e8; }
+.cl-select option { color: var(--text); background-color: var(--panel); }
 
 /* Таблицы */
 .cl-table { width: 100%; border-collapse: collapse; font-size: 10px; }
-.cl-table th, .cl-table td { border: 1px solid #6b6350; padding: 2px 3px; text-align: left; }
-.cl-table th { background: #efe6c8; font-weight: bold; letter-spacing: 0.04em; text-transform: uppercase; font-size: 9px; }
+.cl-table th, .cl-table td { border: 1px solid var(--border); padding: 2px 3px; text-align: left; }
+.cl-table th { background: var(--input-bg); font-weight: bold; letter-spacing: 0.04em; text-transform: uppercase; font-size: 9px; }
 .cl-table .cl-input, .cl-table .cl-select {
   border: none; background: transparent; width: 100%; padding: 1px 2px;
 }
@@ -53,16 +53,56 @@
 /* Тулбар */
 .cl-toolbar {
   display: flex; align-items: center; justify-content: space-between; gap: 8px;
-  background: #e9e0c4; border: 1px solid #8a6d1f; border-radius: 4px;
+  background: var(--panel); border: 1px solid var(--border); border-radius: 4px;
   padding: 6px 10px; margin-bottom: 10px; font-family: Georgia, 'Times New Roman', serif;
 }
-.cl-toolbar .cl-toolbar-name { font-size: 13px; font-weight: bold; color: #141414; letter-spacing: 0.04em; }
+.cl-toolbar .cl-toolbar-name { font-size: 13px; font-weight: bold; color: var(--text); letter-spacing: 0.04em; }
 .cl-toolbar button {
-  background: #e9e0c4; border: 1px solid #8a6d1f; color: #141414;
+  background: var(--panel); border: 1px solid var(--border); color: var(--text);
   font-family: Georgia, 'Times New Roman', serif; font-size: 12px;
   padding: 4px 10px; cursor: pointer; border-radius: 3px;
 }
-.cl-toolbar button:hover { background: #f1e8c9; }
+.cl-toolbar button:hover { background: var(--input-bg); }
+
+/* ===== РАСПРЕДЕЛЕНИЕ ИНФОРМАЦИИ ===== */
+.cl-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 28px; margin-bottom: 8px; }
+.cl-meta-row { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; min-width: 0; }
+.cl-meta-label { flex: 0 0 92px; font-size: 9px; font-weight: bold; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cl-meta-row .cl-input, .cl-meta-row .cl-select { flex: 1; min-width: 0; }
+
+.cl-named-row { display: flex; align-items: center; gap: 6px; height: 22px; }
+.cl-named-row .cl-select { flex: 1; min-width: 0; }
+.cl-virtue-stack { display: flex; flex-direction: column; align-items: center; gap: 3px; margin-bottom: 8px; }
+.cl-virtue-label { font-size: 9px; font-weight: bold; text-transform: uppercase; letter-spacing: .05em; text-align: center; }
+
+.cl-bottom-grid { display: grid; grid-template-columns: 1fr 1.15fr 1fr; gap: 8px 18px; align-items: start; margin-top: 4px; }
+.cl-bottom-col { min-width: 0; }
+.cl-mid-stack { display: flex; flex-direction: column; gap: 12px; }
+.cl-center-block { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.cl-center-block .cl-section-title { width: 100%; margin: 2px 0; }
+.cl-bottom-grid .cl-section-title, .cl-bottom-grid .cl-section-title * { white-space: nowrap; }
+.cl-bottom-grid .cl-section-title { font-size: 10px; }
+.cl-path-input { width: 100%; text-align: center; }
+.cl-bearing-row { display: flex; align-items: center; gap: 4px; font-size: 9px; width: 100%; justify-content: center; }
+.cl-bearing-row .cl-input { flex: 0 1 90px; }
+.cl-bearing-num { flex: 0 0 28px !important; text-align: center; }
+
+.cl-pool-row { display: flex; gap: 2px; justify-content: center; }
+.cl-pool-box { padding: 0; border: 1px solid var(--border); background: transparent; cursor: pointer; box-sizing: border-box; }
+.cl-pool-box.on { background: var(--dot-color); border-color: var(--dot-color); }
+.cl-pool-box:disabled { opacity: .3; cursor: default; }
+.cl-blood-grid { display: grid; grid-template-columns: repeat(10, 12px); gap: 2px; justify-content: center; }
+.cl-perturn { display: flex; align-items: center; gap: 6px; font-size: 8.5px; text-transform: uppercase; }
+.cl-perturn .cl-input { width: 36px; text-align: center; }
+
+.cl-health-row { display: flex; align-items: center; gap: 6px; height: 20px; }
+.cl-health-label { flex: 1; font-size: 9px; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cl-health-pen { width: 22px; text-align: right; font-size: 9px; }
+.cl-health-box { width: 16px; height: 16px; flex: 0 0 16px; padding: 0; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-weight: bold; font-size: 11px; line-height: 1; cursor: pointer; }
+.cl-weakness-input { width: 100%; height: 40px; border: 1px solid var(--border); background: var(--input-bg); }
+.cl-exp-wrap { display: flex; justify-content: center; }
+.cl-exp-input { width: 55%; height: 22px; border: 1px solid var(--border); background: var(--input-bg); text-align: center; }
+.cl-spec-table td { height: 22px; }
 
 /* Печать */
 @media print {
