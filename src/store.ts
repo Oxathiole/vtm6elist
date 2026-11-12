@@ -4,7 +4,7 @@ import { CharacterSheet, SKILLS_LIST, CLAN_DATA, VAMPIRE_TYPES, NOSTALGIA_DECADE
 import { t } from './i18n';
 import { debouncedStorage } from './utils/debouncedStorage';
 import { useUIStore } from './uiStore';
-import { getAttributeCap, getSkillCap, getDisciplineCap, normalizeHistory } from './utils/caps';
+import { getAttributeCap, getAttributeCapByGeneration, getSkillCap, getDisciplineCap, normalizeHistory } from './utils/caps';
 
 const generateId = () => {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
@@ -418,22 +418,22 @@ export const useCharacterStore = create<CharacterStore>()(
           newChar = { ...newChar, meta: newMeta };
 
           const unlock = useUIStore.getState().unlockAttributes;
-          const cap = getAttributeCap(newChar.meta.type, unlock);
+          const cap = getAttributeCapByGeneration(newChar.meta.generation, unlock);
           const A = newChar.attributes;
           const phys = {
-            strength: Math.min(A.physical.strength, cap),
-            dexterity: Math.min(A.physical.dexterity, cap),
-            stamina: Math.min(A.physical.stamina, cap),
+            strength: Math.max(1, Math.min(A.physical.strength, cap)),
+            dexterity: Math.max(1, Math.min(A.physical.dexterity, cap)),
+            stamina: Math.max(1, Math.min(A.physical.stamina, cap)),
           };
           const soc = {
-            charisma: Math.min(A.social.charisma, cap),
-            manipulation: Math.min(A.social.manipulation, cap),
-            composure: Math.min(A.social.composure, cap),
+            charisma: Math.max(1, Math.min(A.social.charisma, cap)),
+            manipulation: Math.max(1, Math.min(A.social.manipulation, cap)),
+            composure: Math.max(1, Math.min(A.social.composure, cap)),
           };
           const men = {
-            intelligence: Math.min(A.mental.intelligence, cap),
-            wits: Math.min(A.mental.wits, cap),
-            resolve: Math.min(A.mental.resolve, cap),
+            intelligence: Math.max(1, Math.min(A.mental.intelligence, cap)),
+            wits: Math.max(1, Math.min(A.mental.wits, cap)),
+            resolve: Math.max(1, Math.min(A.mental.resolve, cap)),
           };
           newChar.attributes = { physical: phys, social: soc, mental: men };
           newChar.vitae = deriveVitae(phys.stamina, newChar.vitae.current);
@@ -453,6 +453,30 @@ export const useCharacterStore = create<CharacterStore>()(
               newChar = { ...newChar, meta: newMeta };
             }
           }
+
+          // Clamp attributes to generation-based cap and recompute vitae/willpower
+          const unlockAttrs = useUIStore.getState().unlockAttributes;
+          const attrCap = getAttributeCapByGeneration(newMeta.generation, unlockAttrs);
+          const A = newChar.attributes;
+          newChar.attributes = {
+            physical: {
+              strength: Math.max(1, Math.min(A.physical.strength, attrCap)),
+              dexterity: Math.max(1, Math.min(A.physical.dexterity, attrCap)),
+              stamina: Math.max(1, Math.min(A.physical.stamina, attrCap)),
+            },
+            social: {
+              charisma: Math.max(1, Math.min(A.social.charisma, attrCap)),
+              manipulation: Math.max(1, Math.min(A.social.manipulation, attrCap)),
+              composure: Math.max(1, Math.min(A.social.composure, attrCap)),
+            },
+            mental: {
+              intelligence: Math.max(1, Math.min(A.mental.intelligence, attrCap)),
+              wits: Math.max(1, Math.min(A.mental.wits, attrCap)),
+              resolve: Math.max(1, Math.min(A.mental.resolve, attrCap)),
+            },
+          };
+          newChar.vitae = deriveVitae(newChar.attributes.physical.stamina, newChar.vitae.current);
+          newChar.willpower = deriveWillpower(newChar.attributes.social.composure, newChar.attributes.mental.resolve, newChar.willpower.current);
 
           const unlock = useUIStore.getState().unlockSkills;
           const skillCap = getSkillCap(value, unlock);
@@ -492,7 +516,7 @@ export const useCharacterStore = create<CharacterStore>()(
 
       updateAttribute: (category, attr, value) => set(state => updateActive(state, c => {
         const unlock = useUIStore.getState().unlockAttributes;
-        const cap = getAttributeCap(c.meta.type, unlock);
+        const cap = getAttributeCapByGeneration(c.meta.generation, unlock);
         const clampedValue = Math.max(1, Math.min(value, cap)); // минимум 1
         const newAttrs = {
           ...c.attributes,

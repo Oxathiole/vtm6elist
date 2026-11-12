@@ -1,4 +1,4 @@
-/* ===== КЛАССИЧЕСКИЙ ЛИСТ V20 — стили привязаны к теме сайта ===== */
+/* ===== КЛАССИЧЕСКИЙ ЛИСТ V20 ===== */
 
 .cl-page-wrapper {
   width: 100%;
@@ -16,16 +16,23 @@
   box-sizing: border-box;
   width: 210mm;
   min-height: 297mm;
-  padding: 10mm;
+  padding: 8mm;
   margin: 0 auto 20px;
   font-family: Georgia, 'Times New Roman', serif;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Заголовки секций */
-.cl-section-title { display: flex; align-items: center; gap: 6px; margin: 8px 0 6px; }
-.cl-section-title .cl-line { flex: 1; height: 1px; background: var(--border); }
+/* Заголовки секций с ромбами */
+.cl-section-title { display: flex; align-items: center; gap: 8px; margin: 10px 0 6px; }
+.cl-section-title .cl-line { flex: 1; height: 2px; background: var(--border); position: relative; }
+.cl-section-title .cl-line::before { content: ''; position: absolute; width: 6px; height: 6px; background: var(--border); transform: rotate(45deg); top: -2px; }
+.cl-section-title .cl-line:first-child::before { right: -2px; }
+.cl-section-title .cl-line:last-child::before { left: -2px; }
+.cl-section-title span { font-size: 13px; font-weight: bold; letter-spacing: 0.05em; text-transform: uppercase; }
 
-/* Общие инпуты внутри листа */
+/* Инпуты */
 .cl-input, .cl-select, .cl-textarea {
   background: var(--input-bg);
   border: none;
@@ -33,88 +40,57 @@
   outline: none;
   color: var(--text);
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: 11px;
+  font-size: 12px;
   box-sizing: border-box;
+  padding: 1px 4px;
+  height: 22px;
 }
-.cl-input:focus, .cl-select:focus, .cl-textarea:focus {
-  border-bottom-color: var(--accent);
-}
-.cl-select { appearance: auto; cursor: pointer; }
-.cl-select option { color: var(--text); background-color: var(--panel); }
+.cl-input:focus { border-bottom-color: var(--accent); }
 
-/* Таблицы */
-.cl-table { width: 100%; border-collapse: collapse; font-size: 10px; }
-.cl-table th, .cl-table td { border: 1px solid var(--border); padding: 2px 3px; text-align: left; }
-.cl-table th { background: var(--input-bg); font-weight: bold; letter-spacing: 0.04em; text-transform: uppercase; font-size: 9px; }
-.cl-table .cl-input, .cl-table .cl-select {
-  border: none; background: transparent; width: 100%; padding: 1px 2px;
-}
+/* Сетки */
+.cl-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.cl-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 28px; margin-bottom: 8px; }
+.cl-meta-row { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; height: 22px; }
+.cl-meta-label { flex: 0 0 85px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
+.cl-meta-row .cl-input { flex: 1; }
 
-/* Тулбар */
-.cl-toolbar {
-  display: flex; align-items: center; justify-content: space-between; gap: 8px;
-  background: var(--panel); border: 1px solid var(--border); border-radius: 4px;
-  padding: 6px 10px; margin-bottom: 10px; font-family: Georgia, 'Times New Roman', serif;
-}
-.cl-toolbar .cl-toolbar-name { font-size: 13px; font-weight: bold; color: var(--text); letter-spacing: 0.04em; }
-.cl-toolbar button {
-  background: var(--panel); border: 1px solid var(--border); color: var(--text);
-  font-family: Georgia, 'Times New Roman', serif; font-size: 12px;
-  padding: 4px 10px; cursor: pointer; border-radius: 3px;
-}
-.cl-toolbar button:hover { background: var(--input-bg); }
+/* Строки */
+.cl-named-row { display: flex; align-items: center; gap: 4px; height: 22px; margin-bottom: 2px; }
+.cl-named-row .cl-input { flex: 1; min-width: 0; }
+.cl-dot-group { display: flex; gap: 2px; flex-shrink: 0; }
 
-/* ===== РАСПРЕДЕЛЕНИЕ ИНФОРМАЦИИ ===== */
-.cl-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 28px; margin-bottom: 8px; }
-.cl-meta-row { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; min-width: 0; }
-.cl-meta-label { flex: 0 0 92px; font-size: 9px; font-weight: bold; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cl-meta-row .cl-input, .cl-meta-row .cl-select { flex: 1; min-width: 0; }
+/* Точки */
+.cl-dot { width: 14px; height: 14px; border: 1px solid var(--border); background: transparent; cursor: pointer; box-sizing: border-box; padding: 0; }
+.cl-dot.circle { border-radius: 50%; }
+.cl-dot.square { border-radius: 0; }
+.cl-dot.filled { background: var(--dot-color); border-color: var(--dot-color); }
 
-.cl-named-row { display: flex; align-items: center; gap: 6px; height: 22px; }
-.cl-named-row .cl-select { flex: 1; min-width: 0; }
-.cl-virtue-stack { display: flex; flex-direction: column; align-items: center; gap: 3px; margin-bottom: 8px; }
-.cl-virtue-label { font-size: 9px; font-weight: bold; text-transform: uppercase; letter-spacing: .05em; text-align: center; }
+/* Таблица специализаций */
+.cl-spec-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.cl-spec-table th, .cl-spec-table td { border: 1px solid var(--border); padding: 1px 4px; text-align: left; }
+.cl-spec-table th { background: var(--input-bg); font-weight: bold; font-size: 10px; text-transform: uppercase; }
+.cl-spec-table .cl-input { border: none; background: transparent; width: 100%; }
 
-.cl-bottom-grid { display: grid; grid-template-columns: 1fr 1.15fr 1fr; gap: 8px 18px; align-items: start; margin-top: 4px; }
-.cl-bottom-col { min-width: 0; }
-.cl-mid-stack { display: flex; flex-direction: column; gap: 12px; }
-.cl-center-block { display: flex; flex-direction: column; align-items: center; gap: 5px; }
-.cl-center-block .cl-section-title { width: 100%; margin: 2px 0; }
-.cl-bottom-grid .cl-section-title, .cl-bottom-grid .cl-section-title * { white-space: nowrap; }
-.cl-bottom-grid .cl-section-title { font-size: 10px; }
-.cl-path-input { width: 100%; text-align: center; }
-.cl-bearing-row { display: flex; align-items: center; gap: 4px; font-size: 9px; width: 100%; justify-content: center; }
-.cl-bearing-row .cl-input { flex: 0 1 90px; }
-.cl-bearing-num { flex: 0 0 28px !important; text-align: center; }
+/* Здоровье */
+.cl-health-row { display: flex; align-items: center; justify-content: space-between; height: 20px; margin-bottom: 2px; }
+.cl-health-label { flex: 1; font-size: 11px; text-transform: uppercase; }
+.cl-health-pen { width: 20px; text-align: right; font-size: 11px; margin-right: 8px; }
 
-.cl-pool-row { display: flex; gap: 2px; justify-content: center; }
-.cl-pool-box { padding: 0; border: 1px solid var(--border); background: transparent; cursor: pointer; box-sizing: border-box; }
-.cl-pool-box.on { background: var(--dot-color); border-color: var(--dot-color); }
-.cl-pool-box:disabled { opacity: .3; cursor: default; }
-.cl-blood-grid { display: grid; grid-template-columns: repeat(10, 12px); gap: 2px; justify-content: center; }
-.cl-perturn { display: flex; align-items: center; gap: 6px; font-size: 8.5px; text-transform: uppercase; }
-.cl-perturn .cl-input { width: 36px; text-align: center; }
-
-.cl-health-row { display: flex; align-items: center; gap: 6px; height: 20px; }
-.cl-health-label { flex: 1; font-size: 9px; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cl-health-pen { width: 22px; text-align: right; font-size: 9px; }
-.cl-health-box { width: 16px; height: 16px; flex: 0 0 16px; padding: 0; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-weight: bold; font-size: 11px; line-height: 1; cursor: pointer; }
-.cl-weakness-input { width: 100%; height: 40px; border: 1px solid var(--border); background: var(--input-bg); }
-.cl-exp-wrap { display: flex; justify-content: center; }
-.cl-exp-input { width: 55%; height: 22px; border: 1px solid var(--border); background: var(--input-bg); text-align: center; }
-.cl-spec-table td { height: 22px; }
+/* Сетка квадратов (Кровь) */
+.cl-blood-grid { display: grid; grid-template-columns: repeat(10, 14px); gap: 2px; justify-content: center; margin-bottom: 4px; }
+.cl-blood-box { width: 14px; height: 14px; border: 1px solid var(--border); background: transparent; cursor: pointer; padding: 0; }
+.cl-blood-box.filled { background: var(--dot-color); border-color: var(--dot-color); }
+.cl-blood-box.disabled { opacity: 0.3; cursor: not-allowed; }
 
 /* Печать */
 @media print {
   .no-print { display: none !important; }
   .cl-page-wrapper { margin: 0 !important; max-width: none !important; overflow: visible !important; }
-  .classic-page {
-    margin: 0 !important; box-shadow: none !important;
-    min-height: 297mm !important; height: 297mm !important;
-    page-break-after: always !important;
-  }
+  .classic-page { margin: 0 !important; box-shadow: none !important; min-height: 297mm !important; height: 297mm !important; page-break-after: always !important; }
   .classic-page:last-of-type { page-break-after: auto !important; }
-  .classic-page input, .classic-page select, .classic-page textarea {
-    font-size: 10px !important; padding: 1px 2px !important;
-  }
+  .classic-page input, .classic-page select, .classic-page textarea { font-size: 10px !important; padding: 1px 2px !important; }
+  .cl-dot { border-color: #000 !important; }
+  .cl-dot.filled { background: #000 !important; border-color: #000 !important; }
+  .cl-blood-box { border-color: #000 !important; }
+  .cl-blood-box.filled { background: #000 !important; border-color: #000 !important; }
 }

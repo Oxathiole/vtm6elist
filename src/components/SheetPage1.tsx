@@ -9,7 +9,7 @@ import { Tooltip } from './Tooltip';
 import { TOOLTIPS } from '../data/tooltips';
 import { useUIStore } from '../uiStore';
 import { Lock, Unlock } from 'lucide-react';
-import { getAttributeCap, getSkillCap } from '../utils/caps';
+import { getAttributeCapByGeneration, getSkillCap } from '../utils/caps';
 
 const ATTR_GROUPS = [
   { key: 'physical' as const, title: 'attributes_groups.physical', attrs: ['strength', 'dexterity', 'stamina'] },
@@ -141,7 +141,7 @@ export const SheetPage1 = ({ showTips }: { showTips?: boolean }) => {
   const unlockSkills = useUIStore(s => s.unlockSkills);
   const setUnlockSkills = useUIStore(s => s.setUnlockSkills);
 
-  const attrCap = getAttributeCap(character.meta.type, unlockAttributes);
+  const attrCap = getAttributeCapByGeneration(character.meta.generation, unlockAttributes);
   const skillCap = getSkillCap(character.meta.type, unlockSkills);
 
   const [isCustomClan, setIsCustomClan] = useState(
@@ -161,6 +161,9 @@ export const SheetPage1 = ({ showTips }: { showTips?: boolean }) => {
   return (
     <div id="character-sheet" className="sheet-page" style={{ ...sheetStyle, width: sheetWidth }}>
       {/* ===== 1. ШАПКА ===== */}
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '4px' }}>
+        <Tooltip text={TOOLTIPS.characterCreation} showTips={showTips} />
+      </div>
       <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '10px' : '20px', marginBottom: '10px', flexShrink: 0 }}>
         
         {/* Левая колонка */}
@@ -271,6 +274,7 @@ export const SheetPage1 = ({ showTips }: { showTips?: boolean }) => {
               <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 {t(g.title)}
                 <Tooltip text={TOOLTIPS.attributes} showTips={!!showTips} />
+                <Tooltip text={TOOLTIPS.characterCreation} showTips={!!showTips} />
               </span>
             </div>
           ))}

@@ -14,6 +14,16 @@ export const getAttributeCap = (type: string, unlock: boolean): number => {
   }
 };
 
+// Лимит по поколению: 4,5,6 → 7; 7 → 6; 8-13+ → 5
+export const getAttributeCapByGeneration = (generation: string | number, unlock: boolean): number => {
+  if (unlock) return 10;
+  const gen = parseInt(String(generation), 10);
+  if (isNaN(gen)) return 5;
+  if (gen <= 6) return 7;   // 4,5,6 -> 7
+  if (gen === 7) return 6;  // 7 -> 6
+  return 5;                 // 8-13+ -> 5
+};
+
 export const getSkillCap = (_type: string, unlock: boolean): number => {
   if (unlock) return 5;
   return 3; // По шагу 4: при создании ни один Навык не может превышать 3 пункта
