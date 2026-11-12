@@ -3,6 +3,7 @@ import { useCharacterStore } from './store';
 import { CharacterSelector } from './components/CharacterSelector';
 import i18n, { t, loadAndChangeLanguage } from './i18n';
 import { VAMPIRE_TYPES, CREATION_RULES } from './types';
+import { useUIStore } from './uiStore';
 import { safeStorage } from './utils/storage';
 import { THEMES, DEFAULT_THEME_ID } from './themes';
 import { Download, Upload, FileJson, RotateCcw, Menu, X, Send, BookOpen, Globe, History as HistoryIcon, HelpCircle, Moon } from 'lucide-react';
@@ -43,10 +44,15 @@ function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [themeId, setThemeId] = useState<string>(() => safeStorage.get('vtm6e-theme') || DEFAULT_THEME_ID);
   const [lang, setLang] = useState<string>(() => safeStorage.get('vtm6e-lang') || 'ru');
-  const [showTips, setShowTips] = useState<boolean>(() => safeStorage.get('vtm6e-tips') !== 'false');
+  const [showTips, setShowTips] = useState<boolean>(() => {
+    const saved = safeStorage.get('vtm6e-tips');
+    return saved !== null && saved !== 'false';
+  });
   useEffect(() => {
     safeStorage.set('vtm6e-tips', showTips.toString());
   }, [showTips]);
+
+  const { edition } = useUIStore();
 
   const [showSummary, setShowSummary] = useState<boolean>(() => safeStorage.get('vtm6e-summary') !== 'false');
   useEffect(() => { safeStorage.set('vtm6e-summary', showSummary.toString()); }, [showSummary]);
@@ -276,7 +282,7 @@ function App() {
       )}
 
       {/* ПАНЕЛЬ СВОДКИ ПРАВИЛ */}
-      {showSummary && (
+      {showSummary && edition !== '20th' && (
         <div
           className="no-print fixed top-[70px] right-[14px] md:right-[30px] z-[80] rounded-lg p-4 transition-all"
           style={{

@@ -132,7 +132,7 @@ const PowerDisplay = ({ label, current, max, onChange, size = 14 }: { label: str
   );
 };
 
-export const SheetPage1 = ({ showTips }: { showTips?: boolean }) => {
+export const SheetPage1 = ({ showTips, edition }: { showTips?: boolean; edition?: '6e' | '20th' }) => {
   const character = useCharacterStore(s => s.getActive());
   const { updateMeta, updateAttribute, updateSkill, updateSpecification, updateVitae, updateWillpower, updateBloodSurge } = useCharacterStore();
   const isMobile = useIsMobile();
@@ -143,6 +143,7 @@ export const SheetPage1 = ({ showTips }: { showTips?: boolean }) => {
 
   const attrCap = getAttributeCapByGeneration(character.meta.generation, unlockAttributes);
   const skillCap = getSkillCap(character.meta.type, unlockSkills);
+  const creationTips = !!showTips && edition !== '20th';
 
   const [isCustomClan, setIsCustomClan] = useState(
     () => character.meta.clan !== '' && !CLANS_LIST.some(c => c.id === character.meta.clan)
@@ -162,7 +163,7 @@ export const SheetPage1 = ({ showTips }: { showTips?: boolean }) => {
     <div id="character-sheet" className="sheet-page" style={{ ...sheetStyle, width: sheetWidth }}>
       {/* ===== 1. ШАПКА ===== */}
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '4px' }}>
-        <Tooltip text={TOOLTIPS.characterCreation} showTips={showTips} />
+        <Tooltip text={TOOLTIPS.characterCreation} showTips={creationTips} />
       </div>
       <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '10px' : '20px', marginBottom: '10px', flexShrink: 0 }}>
         
@@ -274,7 +275,7 @@ export const SheetPage1 = ({ showTips }: { showTips?: boolean }) => {
               <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 {t(g.title)}
                 <Tooltip text={TOOLTIPS.attributes} showTips={!!showTips} />
-                <Tooltip text={TOOLTIPS.characterCreation} showTips={!!showTips} />
+                <Tooltip text={TOOLTIPS.characterCreation} showTips={creationTips} />
               </span>
             </div>
           ))}

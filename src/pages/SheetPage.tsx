@@ -1,4 +1,4 @@
-import { useState, useEffect, Suspense, lazy } from 'react';
+import { Suspense, lazy } from 'react';
 import { useCharacterStore } from '../store';
 import { useTranslation } from 'react-i18next';
 import { SheetPage1 } from '../components/SheetPage1';
@@ -6,7 +6,7 @@ import { SheetPage2 } from '../components/SheetPage2';
 import { SheetPage3 } from '../components/SheetPage3';
 import { SheetPageInventory } from '../components/SheetPageInventory';
 import { useSheetHotkeys } from '../hooks';
-import { safeStorage } from '../utils/storage';
+import { useUIStore } from '../uiStore';
 
 const SheetPage4 = lazy(() => import('../components/SheetPage4').then(m => ({ default: m.SheetPage4 })));
 const ClassicSheetPage = lazy(() => import('../classic/ClassicSheetPage').then(m => ({ default: m.ClassicSheetPage })));
@@ -21,12 +21,7 @@ export const SheetPage = ({ showTips, handleExportPdf }: SheetPageProps) => {
   const character = useCharacterStore((s) => s.getActive());
   const addPowerPage = useCharacterStore((s) => s.addPowerPage);
   const { t } = useTranslation();
-
-  const [edition, setEdition] = useState<'6e' | '20th'>(() =>
-    (safeStorage.get('vtm-sheet-edition') as '6e' | '20th') || '20th'
-  );
-
-  useEffect(() => { safeStorage.set('vtm-sheet-edition', edition); }, [edition]);
+  const { edition, setEdition } = useUIStore();
 
   return (
     <div style={{ width: '100%', maxWidth: '210mm', margin: '0 auto', overflowX: 'auto' }}>
@@ -68,7 +63,7 @@ export const SheetPage = ({ showTips, handleExportPdf }: SheetPageProps) => {
 
       {edition === '6e' ? (
         <>
-          <SheetPage1 showTips={showTips} />
+          <SheetPage1 showTips={showTips} edition={edition} />
           <SheetPage2 />
           <SheetPage3 />
           <SheetPageInventory />

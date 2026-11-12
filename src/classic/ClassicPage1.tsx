@@ -84,7 +84,6 @@ export const ClassicPage1 = () => {
 
   const gen = character.generation;
   const attrCap = (attr: string) => {
-    if (attr === 'appearance') return 5;
     if (gen <= 6) return 7;
     if (gen === 7) return 6;
     return 5;
@@ -295,9 +294,12 @@ export const ClassicPage1 = () => {
                 <span className="cl-health-label">{lvl.label}</span>
                 <span className="cl-health-pen">{lvl.penalty}</span>
                 <button
-                  className={`cl-dot square ${character.health.damageTaken >= i + 1 ? 'filled' : ''}`}
-                  onClick={() => updateHealth('damageTaken', character.health.damageTaken === i + 1 ? 0 : i + 1)}
-                />
+                  className={`cl-dot square ${(character.health?.squares?.[i] ?? 0) > 0 ? 'filled' : ''}`}
+                  onClick={() => updateHealth(i)}
+                  style={{ fontSize: '10px', lineHeight: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: '15px', minHeight: '12px', padding: 0 }}
+                >
+                  {character.health?.squares?.[i] === 1 ? '/' : character.health?.squares?.[i] === 2 ? 'X' : character.health?.squares?.[i] === 3 ? 'Ж' : ''}
+                </button>
               </div>
             ))}
           </div>
@@ -315,11 +317,11 @@ export const ClassicPage1 = () => {
       <SectionTitle>ДОСТИЖЕНИЯ / ОСОБЫЕ ЧЕРТЫ / ОБРЯДЫ</SectionTitle>
       <div className="cl-grid-3" style={{ marginBottom: '6px' }}>
         <div>
-          <div style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '10px', marginBottom: '2px' }}>ДОСТИЖЕНИЯ</div>
+          <div style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '10px', marginBottom: '2px' }}>НЕДОСТАТКИ</div>
           {(character.merits || []).map((m, i) => (
             <div key={i} className="cl-named-row">
               <input className="cl-input" value={m.name} onChange={e => updateMerit(i, 'name', e.target.value)} />
-              <input className="cl-input" value={m.cost} onChange={e => updateMerit(i, 'cost', e.target.value)} style={{ width: '20px', textAlign: 'center' }} />
+              <Rating value={m.dots || 0} shape="square" onChange={v => updateMerit(i, 'dots', v)} allowZero max={7} />
               <button className="no-print" onClick={() => removeMerit(i)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: '#e74c3c' }}><Trash2 size={10} /></button>
             </div>
           ))}
@@ -327,11 +329,11 @@ export const ClassicPage1 = () => {
         </div>
 
         <div>
-          <div style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '10px', marginBottom: '2px' }}>ОСОБЫЕ ЧЕРТЫ</div>
+          <div style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '10px', marginBottom: '2px' }}>ДОСТОИНСТВА</div>
           {(character.otherTraits || []).map((t, i) => (
             <div key={i} className="cl-named-row">
               <input className="cl-input" value={t.name} onChange={e => updateOtherTrait(i, 'name', e.target.value)} />
-              <Rating value={t.dots} shape="square" onChange={v => updateOtherTrait(i, 'dots', v)} allowZero />
+              <Rating value={t.dots} shape="square" onChange={v => updateOtherTrait(i, 'dots', v)} allowZero max={7} />
               <button className="no-print" onClick={() => removeOtherTrait(i)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: '#e74c3c' }}><Trash2 size={10} /></button>
             </div>
           ))}

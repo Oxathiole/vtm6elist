@@ -1,4 +1,4 @@
-export interface ClassicMerit { name: string; cost: string }
+export interface ClassicMerit { name: string; dots: number }
 export interface ClassicOtherTrait { name: string; dots: number }
 export interface ClassicRitual { name: string; level: string }
 export interface ClassicCombatRow { weapon: string; difficulty: string; damage: string; range: string; rate: string; clip: string; size: string }
@@ -43,7 +43,7 @@ export interface ClassicSheetData {
   humanity: number;
   willpower: number;
   bloodPool: { current: number; max: number; perTurn: number };
-  health: { damageTaken: number };
+  health: { squares: number[] };
   merits: ClassicMerit[];
   otherTraits: ClassicOtherTrait[];
   rituals: ClassicRitual[];

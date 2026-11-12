@@ -30,7 +30,7 @@ const createDefault = (): ClassicSheetData => ({
   humanity: 7,
   willpower: 5,
   bloodPool: { current: 10, max: 10, perTurn: 1 },
-  health: { damageTaken: 0 },
+  health: { squares: [0, 0, 0, 0, 0, 0, 0] },
   merits: [],
   otherTraits: [],
   rituals: [],
@@ -84,9 +84,9 @@ type ClassicState = {
   removeSpecialization: (index: number) => void;
   updateVirtue: (key: 'conscience' | 'selfControl' | 'courage', value: number) => void;
   updateBloodPool: (field: 'current' | 'max' | 'perTurn', value: number) => void;
-  updateHealth: (field: 'damageTaken', value: number) => void;
+  updateHealth: (index: number) => void;
   setGeneration: (value: number) => void;
-  updateMerit: (index: number, field: 'name' | 'cost', value: string) => void;
+  updateMerit: (index: number, field: 'name' | 'dots', value: string | number) => void;
   addMerit: () => void;
   removeMerit: (index: number) => void;
   updateOtherTrait: (index: number, field: 'name' | 'dots', value: string | number) => void;
@@ -150,7 +150,11 @@ export const useClassicStore = create<ClassicState>()(
 
       updateVirtue: (key, value) => set({ character: { ...get().character, virtues: { ...get().character.virtues, [key]: value } } }),
       updateBloodPool: (field, value) => set({ character: { ...get().character, bloodPool: { ...get().character.bloodPool, [field]: value } } }),
-      updateHealth: (field, value) => set({ character: { ...get().character, health: { ...get().character.health, [field]: value } } }),
+      updateHealth: (index) => {
+        const cur = [...(get().character.health?.squares ?? [])];
+        cur[index] = ((cur[index] ?? 0) + 1) % 4;
+        set({ character: { ...get().character, health: { squares: cur } } });
+      },
 
       setGeneration: (value) => {
         const bp = BLOOD_POOL_TABLE[value] || { max: 10, perTurn: 1 };
@@ -160,7 +164,7 @@ export const useClassicStore = create<ClassicState>()(
       },
 
       // Merits
-      addMerit: () => set({ character: { ...get().character, merits: [...get().character.merits, { name: '', cost: '' }] } }),
+      addMerit: () => set({ character: { ...get().character, merits: [...get().character.merits, { name: '', dots: 0 }] } }),
       updateMerit: (index, field, value) => {
         const m = [...get().character.merits];
         m[index] = { ...m[index], [field]: value };
@@ -244,7 +248,9 @@ export const useClassicStore = create<ClassicState>()(
               perTurn: c.bloodPool?.perTurn ?? d.bloodPool.perTurn,
             },
             health: {
-              damageTaken: c.health?.damageTaken ?? d.health.damageTaken,
+              squares: Array.isArray(c.health?.squares) && c.health.squares.length === 7
+                ? c.health.squares
+                : d.health.squares,
             },
             merits: Array.isArray(c.merits) ? c.merits : [],
             otherTraits: Array.isArray(c.otherTraits) ? c.otherTraits : [],
